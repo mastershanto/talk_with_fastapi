@@ -1,0 +1,1 @@
+docker build -t talk_with_fastapi:latest -f docker/Dockerfile .
