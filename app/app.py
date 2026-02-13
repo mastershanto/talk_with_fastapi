@@ -13,30 +13,52 @@ from app import models
 async def lifespan(app: FastAPI):
     """Initialize database on startup"""
     try:
-        # Create tables
-        Base.metadata.create_all(bind=engine)
+        # Try to create tables with a timeout
+        from sqlalchemy.exc import OperationalError, ProgrammingError
+        import signal
         
-        # Add sample data if empty
-        from app.database import SessionLocal
-        db = SessionLocal()
+        def timeout_handler(signum, frame):
+            raise TimeoutError("Database initialization timed out")
+        
+        # Set a 15-second timeout for database initialization
+        signal.signal(signal.SIGALRM, timeout_handler)
+        signal.alarm(15)
+        
         try:
-            if db.query(models.User).count() == 0:
-                sample_users = [
-                    models.User(name="Alice", age=25),
-                    models.User(name="Bob", age=30),
-                    models.User(name="Charlie", age=35),
-                    models.User(name="Shawon", age=35),
-                    models.User(name="Sabber", age=37),
-                ]
-                db.add_all(sample_users)
-                db.commit()
-                print("✓ Sample data added")
-        finally:
-            db.close()
-        print("✓ Database initialized successfully")
+            Base.metadata.create_all(bind=engine)
+            signal.alarm(0)  # Cancel alarm
+            print("✓ Database tables created")
+            
+            # Try to add sample data
+            from app.database import SessionLocal
+            db = SessionLocal()
+            try:
+                if db.query(models.User).count() == 0:
+                    sample_users = [
+                        models.User(name="Alice", age=25),
+                        models.User(name="Bob", age=30),
+                        models.User(name="Charlie", age=35),
+                        models.User(name="Shawon", age=35),
+                        models.User(name="Sabber", age=37),
+                    ]
+                    db.add_all(sample_users)
+                    db.commit()
+                    print("✓ Sample data added")
+            finally:
+                db.close()
+            print("✓ Database initialized successfully")
+        except TimeoutError:
+            signal.alarm(0)  # Cancel alarm
+            print("⚠ Database initialization timed out (Aiven server not responding)")
+            print("  → Tables will be created on first request")
+        except (OperationalError, ProgrammingError) as e:
+            signal.alarm(0)  # Cancel alarm
+            print(f"⚠ Database error: {str(e)[:100]}")
+            print("  → Continuing without database initialization")
+            
     except Exception as e:
-        print(f"⚠ Database initialization failed: {e}")
-        print("⚠ App will continue running without database")
+        print(f"⚠ Unexpected error during startup: {type(e).__name__}: {str(e)[:100]}")
+        print("  → App will continue running")
     
     yield
 
