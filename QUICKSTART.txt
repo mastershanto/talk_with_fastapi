@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+
+# 🚀 QUICKSTART - Run API + Database with Docker
+
+## Prerequisites
+- Docker Desktop must be installed
+- Port 8000 and 5432 must be available
+
+## Option 1: FASTEST WAY (Recommended)
+cd /Users/masterShanto/developments/talk_with_fastapi
+chmod +x docker-start.sh
+./docker-start.sh
+
+## Option 2: Manual Commands
+cd /Users/masterShanto/developments/talk_with_fastapi
+
+# Ensure Docker is running
+open -a Docker  # macOS only
+sleep 30
+
+# Start the stack
+docker-compose down -v 2>/dev/null || true
+docker-compose up -d
+
+# Wait for services
+sleep 20
+
+# Test it
+curl http://localhost:8000/
+
+## Option 3: If Something Goes Wrong
+# Kill processes on ports
+lsof -ti:8000 | xargs kill -9 2>/dev/null || true
+lsof -ti:5432 | xargs kill -9 2>/dev/null || true
+
+# Reset Docker
+docker-compose down -v
+docker system prune -f
+open -a Docker
+sleep 60
+docker-compose up -d
+
+## 🌐 Access Points
+- API Docs:        http://localhost:8000/docs
+- ReDoc:           http://localhost:8000/redoc
+- Database CLI:    docker-compose exec db psql -U avnadmin -d defaultdb
+
+## 📊 Useful Commands
+docker-compose logs -f api              # Watch API logs
+docker-compose logs -f db               # Watch database logs
+docker-compose ps                       # Check status
+docker-compose down                     # Stop all
+docker-compose down -v                  # Stop + delete data
+
+## ✨ What's Running
+✅ FastAPI Server      - Port 8000
+✅ PostgreSQL Database - Port 5432 (internal only)
+✅ Hot Reload          - Code changes auto-reload
+✅ Persistent Data     - Survives container restarts
+
+## 🔗 Sample API Calls
+# Get all users
+curl http://localhost:8000/users/
+
+# Create user
+curl -X POST http://localhost:8000/users/ \
+  -H "Content-Type: application/json" \
+  -d '{"name":"John","age":30}'
+
+# Get specific user
+curl http://localhost:8000/users/1
+
+# Update user
+curl -X PUT http://localhost:8000/users/1 \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Jane","age":31}'
+
+# Delete user
+curl -X DELETE http://localhost:8000/users/1
+
+That's it! 🎉
+

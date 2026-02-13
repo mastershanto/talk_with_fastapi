@@ -32,6 +32,10 @@ RUN python -m pip install --upgrade pip setuptools wheel \
 # Copy application code
 COPY . ${APP_HOME}
 RUN chown -R appuser:appuser ${APP_HOME}
+
+# Create data directory for SQLite
+RUN mkdir -p ${APP_HOME}/data && chown -R appuser:appuser ${APP_HOME}/data
+
 USER appuser
 
 # Expose port used by Uvicorn
