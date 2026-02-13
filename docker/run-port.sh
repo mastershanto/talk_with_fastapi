@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+m#!/usr/bin/env bash
 set -euo pipefail
 
 # Run the talk_with_fastapi container but allow overriding the HOST port.
