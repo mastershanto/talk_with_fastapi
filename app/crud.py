@@ -94,3 +94,60 @@ def delete_user(db: Session, user_id: int) -> bool:
         db.rollback()
         print(f"Database error during delete: {e}")
         raise
+
+
+# ---- Item CRUD operations ----
+def get_item(db: Session, item_id: int) -> models.Item | None:
+    """Get a single item by ID"""
+    try:
+        return db.query(models.Item).filter(models.Item.id == item_id).first()
+    except SQLAlchemyError as e:
+        print(f"Database error: {e}")
+        raise
+
+
+def get_items(db: Session, skip: int = 0, limit: int = 100) -> list[models.Item]:
+    """Get list of items with pagination"""
+    try:
+        return db.query(models.Item).offset(skip).limit(limit).all()
+    except (OperationalError, SQLAlchemyError) as e:
+        print(f"Database error: {e}")
+        ensure_tables_exist()
+        return []
+
+
+def create_item(db: Session, item: schemas.ItemCreate) -> models.Item:
+    """Create a new item"""
+    try:
+        ensure_tables_exist()
+        db_item = models.Item(
+            title=item.title,
+            description=item.description,
+            price=item.price,
+            is_active=item.is_active,
+            owner_id=item.owner_id,
+        )
+        db.add(db_item)
+        db.commit()
+        db.refresh(db_item)
+        return db_item
+    except (OperationalError, SQLAlchemyError) as e:
+        db.rollback()
+        print(f"Database error during create_item: {e}")
+        raise
+
+
+def delete_item(db: Session, item_id: int) -> bool:
+    """Delete an item"""
+    try:
+        ensure_tables_exist()
+        db_item = get_item(db, item_id)
+        if not db_item:
+            return False
+        db.delete(db_item)
+        db.commit()
+        return True
+    except (OperationalError, SQLAlchemyError) as e:
+        db.rollback()
+        print(f"Database error during delete_item: {e}")
+        raise

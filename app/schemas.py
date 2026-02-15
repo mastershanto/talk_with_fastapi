@@ -26,3 +26,22 @@ class UserResponse(UserBase):
     id: int
 
     model_config = ConfigDict(from_attributes=True)
+
+
+# Item schemas
+class ItemBase(BaseModel):
+    title: str = Field(..., min_length=1, max_length=200)
+    description: str | None = Field(None, max_length=1000)
+    price: float = Field(..., ge=0)
+    is_active: bool = True
+    owner_id: int
+
+
+class ItemCreate(ItemBase):
+    pass
+
+
+class ItemResponse(ItemBase):
+    id: int
+
+    model_config = ConfigDict(from_attributes=True)

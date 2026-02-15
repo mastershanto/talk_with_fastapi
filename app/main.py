@@ -2,10 +2,12 @@
 Main FastAPI application
 """
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
+from sqlalchemy.orm import Session
+from sqlalchemy import text
 
-from app.database import Base, engine
-from app.routers import users
+from app.database import Base, engine, get_db
+from app.routers import users, items
 from app import models
 
 
@@ -75,13 +77,16 @@ app = FastAPI(
 
 # Include routers
 app.include_router(users.router)
+app.include_router(items.router)
 
 
 @app.get("/", tags=["root"])
-def root():
-    """Root endpoint"""
-    return {
-        "message": "Welcome to User Management API",
-        "docs": "/docs",
-        "version": "1.0.0"
-    }
+def read_root():
+    return {"message": "Aiven PostgreSQL এর সাথে আপনার FastAPI কানেক্টেড!"}
+
+
+@app.get("/test-db")
+def test_db(db: Session = Depends(get_db)) -> dict[str, str]:
+    # ডাটাবেস থেকে একটি সিম্পল কোয়েরি চালানো
+    result = db.execute(text("SELECT version();")).scalar_one_or_none()
+    return {"postgresql_version": result or "unknown"}
