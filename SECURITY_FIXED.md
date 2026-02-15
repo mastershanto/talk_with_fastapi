@@ -1,4 +1,4 @@
-# ✅ Git Security Issue - RESOLVED
+<!-- # ✅ Git Security Issue - RESOLVED
 
 ## 🔒 Problem Identified
 GitHub detected hardcoded **Aiven database credentials** in your repository and blocked the push:
@@ -189,4 +189,4 @@ Your repository is now:
 | Ready for Use | ✅ Yes |
 
 Your FastAPI + PostgreSQL + Docker setup is now **secure and ready to use**! 🚀
-
+ -->

@@ -16,8 +16,9 @@ async def lifespan(app: FastAPI):
         # Try to create tables with a timeout
         from sqlalchemy.exc import OperationalError, ProgrammingError
         import signal
+        import types
         
-        def timeout_handler(signum, frame):
+        def timeout_handler(signum: int, frame: types.FrameType | None) -> None:
             raise TimeoutError("Database initialization timed out")
         
         # Set a 15-second timeout for database initialization
