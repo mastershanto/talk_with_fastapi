@@ -1,3 +1,0 @@
-# NOTE: This file is superseded by the app/schemas/ package.
-# Python automatically uses the package (directory) over this module file.
-# Import schemas via: from app.schemas import UserCreate, ItemResponse, ...
