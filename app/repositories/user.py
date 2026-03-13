@@ -2,11 +2,11 @@
 User data-access object.
 
 Extends CRUDBase with user-specific queries.
-Import the singleton:  from app.crud import user_crud
+Import the singleton:  from app.repositories import user_crud
 """
 from sqlalchemy.orm import Session
 
-from app.crud.base import CRUDBase
+from app.repositories.base import CRUDBase
 from app.models.user import User
 from app.schemas.user import UserCreate, UserUpdate
 

@@ -1,4 +1,4 @@
-from app.crud.base import CRUDBase
+from app.repositories.base import CRUDBase
 from app.models.property import Property
 from app.schemas.property import PropertyCreate, PropertyUpdate
 

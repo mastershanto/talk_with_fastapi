@@ -11,8 +11,8 @@ DELETE /api/v1/properties/{id}       delete_property    — hard delete
 """
 from fastapi import APIRouter, status
 
-from app.crud.property import property_crud
-from app.crud.user import user_crud  # Import correctly from app.crud.user
+from app.repositories.property import property_crud
+from app.repositories.user import user_crud  # Import correctly from app.repositories.user
 from app.dependencies import DBSession, Pagination
 from app.exceptions import NotFoundException
 from app.schemas.property import PropertyCreate, PropertyUpdate, PropertyResponse

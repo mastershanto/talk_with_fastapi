@@ -14,7 +14,7 @@ global exception handler registered in main.py — no try/except noise here.
 """
 from fastapi import APIRouter, status
 
-from app.crud import user_crud
+from app.repositories import user_crud
 from app.dependencies import DBSession, Pagination
 from app.exceptions import NotFoundException
 from app.schemas.user import UserCreate, UserUpdate, UserResponse, UserWithItemsResponse
