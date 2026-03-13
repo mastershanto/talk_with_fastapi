@@ -1,4 +1,4 @@
-# Real Estate Enterprise API - Educational Architecture Guide
+<!-- # Real Estate Enterprise API - Educational Architecture Guide
 
 Welcome! This project is a textbook-style implementation of an enterprise-grade FastAPI application. It follows industry best practices and is designed to teach you professional Python web development.
 
@@ -327,4 +327,4 @@ CORS, error handling at application level
 
 ---
 
-**Ready to dive deeper?** Start with the `/ARCHITECTURE.md` files in each module or explore the source code!
+**Ready to dive deeper?** Start with the `/ARCHITECTURE.md` files in each module or explore the source code! -->
