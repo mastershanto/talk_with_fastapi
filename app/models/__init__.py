@@ -6,9 +6,9 @@ forward-reference strings (e.g. the "Item" string in User.items) before
 any query is executed.
 
 Usage anywhere in the project:
-    from app.models import User, Item
+    from app.models import User, Property
 """
 from app.models.user import User
-from app.models.item import Item
+from app.models.property import Property
 
-__all__ = ["User", "Item"]
+__all__ = ["User", "Property"]

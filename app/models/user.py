@@ -20,7 +20,7 @@ class User(TimestampMixin, Base):
 
     Relationships
     -------------
-    items : one-to-many → Item  (cascade delete to avoid orphans)
+    items: "properties" : one-to-many → Property  (cascade delete to avoid orphans)
     """
 
     __tablename__ = "users"
@@ -29,8 +29,8 @@ class User(TimestampMixin, Base):
     name: Mapped[str] = mapped_column(String(100), nullable=False)
     age: Mapped[int] = mapped_column(Integer, nullable=False)
 
-    items: Mapped[list["Item"]] = relationship(  # type: ignore[name-defined]
-        "Item",
+    properties: Mapped[list["Property"]] = relationship(  # type: ignore[name-defined]
+        "Property",
         back_populates="owner",
         cascade="all, delete-orphan",
         lazy="select",

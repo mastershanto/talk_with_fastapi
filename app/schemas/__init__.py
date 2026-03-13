@@ -1,11 +1,8 @@
 """
 Schemas package — re-exports every public schema in one place.
-
-Usage:
-    from app.schemas import UserCreate, ItemResponse, MessageResponse
 """
 from app.schemas.common import MessageResponse, PaginatedResponse
-from app.schemas.item import ItemBase, ItemCreate, ItemUpdate, ItemResponse
+from app.schemas.property import PropertyBase, PropertyCreate, PropertyUpdate, PropertyResponse
 from app.schemas.user import (
     UserBase,
     UserCreate,
@@ -18,11 +15,13 @@ __all__ = [
     # common
     "MessageResponse",
     "PaginatedResponse",
-    # item
-    "ItemBase",
-    "ItemCreate",
-    "ItemUpdate",
-    "ItemResponse",
+    
+    # property
+    "PropertyBase",
+    "PropertyCreate",
+    "PropertyUpdate",
+    "PropertyResponse",
+
     # user
     "UserBase",
     "UserCreate",

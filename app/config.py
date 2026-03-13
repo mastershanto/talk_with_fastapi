@@ -18,11 +18,8 @@ class Settings(BaseSettings):
     """
 
     # ── Application ───────────────────────────────────────────────────────────
-    APP_NAME: str = "User & Item Management API"
-    APP_DESCRIPTION: str = (
-        "A production-grade REST API built with FastAPI, SQLAlchemy 2.x, "
-        "and Pydantic v2. Designed as a reference architecture."
-    )
+    APP_NAME: str = "Real Estate Enterprise API"
+    APP_DESCRIPTION: str = "Enterprise-grade Property Management System"
     APP_VERSION: str = "2.0.0"
     DEBUG: bool = False
 

@@ -13,7 +13,7 @@ from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from app.schemas.item import ItemResponse
+from app.schemas.property import PropertyResponse
 
 
 class UserBase(BaseModel):
@@ -62,6 +62,6 @@ class UserResponse(UserBase):
 
 
 class UserWithItemsResponse(UserResponse):
-    """Serialised user including the list of items they own."""
+    """Serialised user including the list of properties they own."""
 
-    items: list[ItemResponse] = []
+    properties: list[PropertyResponse] = []

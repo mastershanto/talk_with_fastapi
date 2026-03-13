@@ -25,7 +25,10 @@ from sqlalchemy import text
 from app.config import settings
 from app.database import Base, engine, SessionLocal
 from app.exceptions import register_exception_handlers
-from app.routers import users, items
+from app.routers import users, properties
+from sqladmin import Admin, ModelView
+from app.models.user import User
+from app.models.property import Property
 
 
 # ── Logging ───────────────────────────────────────────────────────────────────
@@ -50,8 +53,7 @@ def _create_tables() -> None:
     simply omitted — database creation should still succeed or fail fast.
     """
     # Import models so their metadata is registered on Base before create_all
-    from app.models import User, Item  # noqa: F401
-
+    from app.models import User, Property  # noqa: F401
     in_main_thread = threading.current_thread() is threading.main_thread()
 
     if in_main_thread:
@@ -109,7 +111,7 @@ async def lifespan(app: FastAPI):  # noqa: ARG001
     """Run startup tasks before yielding, then shutdown tasks after."""
     logger.info("Starting %s v%s ...", settings.APP_NAME, settings.APP_VERSION)
     _create_tables()
-    _seed_sample_data()
+    # _seed_sample_data()  # Skipped for production readiness
     yield
     logger.info("Shutdown complete.")
 
@@ -147,7 +149,18 @@ def create_app() -> FastAPI:
     # ── API routers ────────────────────────────────────────────────────────────
     API_PREFIX = "/api/v1"
     application.include_router(users.router, prefix=API_PREFIX)
-    application.include_router(items.router, prefix=API_PREFIX)
+    application.include_router(properties.router, prefix=API_PREFIX)
+
+    # ── Admin Panel ────────────────────────────────────────────────────────────
+    admin = Admin(application, engine)
+    class UserAdmin(ModelView, model=User):
+        column_list = [User.id, User.name, User.age]
+
+    class PropertyAdmin(ModelView, model=Property):
+        column_list = [Property.id, Property.title, Property.price, Property.status, Property.owner_id]
+
+    admin.add_view(UserAdmin)
+    admin.add_view(PropertyAdmin)
 
     # ── Health / utility endpoints ─────────────────────────────────────────────
 

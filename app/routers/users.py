@@ -4,10 +4,10 @@ User endpoints.
 Routes
 ------
 GET    /api/v1/users            list_users    — paginated list
-GET    /api/v1/users/{id}       get_user      — single user + their items
+    "/api/v1/users/{id}       get_user      — single user + their properties
 POST   /api/v1/users            create_user   — create new user
 PUT    /api/v1/users/{id}       update_user   — partial update
-DELETE /api/v1/users/{id}       delete_user   — hard delete (cascades to items)
+DELETE /api/v1/users/{id}       delete_user   — hard delete (cascades to properties)
 
 All database errors escalate as AppException subclasses, caught by the
 global exception handler registered in main.py — no try/except noise here.
@@ -28,7 +28,7 @@ router = APIRouter(prefix="/users", tags=["Users"])
     summary="List all users",
 )
 def list_users(db: DBSession, pagination: Pagination) -> list[UserResponse]:
-    """Return a paginated list of users (no items embedded)."""
+    """Return a paginated list of users (no properties embedded)."""
     users = user_crud.get_multi(db, skip=pagination.skip, limit=pagination.limit)
     return [UserResponse.model_validate(u) for u in users]
 
@@ -36,10 +36,10 @@ def list_users(db: DBSession, pagination: Pagination) -> list[UserResponse]:
 @router.get(
     "/{user_id}",
     response_model=UserWithItemsResponse,
-    summary="Get a user with their items",
+    summary="Get a user with their properties",
 )
 def get_user(user_id: int, db: DBSession) -> UserWithItemsResponse:
-    """Return a single user including the list of items they own, or 404."""
+    """Return a single user including the list of properties they own, or 404."""
     user = user_crud.get(db, user_id)
     if not user:
         raise NotFoundException(f"User {user_id} not found.")
@@ -84,8 +84,8 @@ def delete_user(user_id: int, db: DBSession) -> None:
     """
     Hard-delete a user by ID.
 
-    All items owned by this user are also deleted (CASCADE defined on the
-    FK relationship in the Item model).
+    All properties owned by this user are also deleted (CASCADE defined on the
+    FK relationship in the Property model).
     """
     db_user = user_crud.get(db, user_id)
     if not db_user:
