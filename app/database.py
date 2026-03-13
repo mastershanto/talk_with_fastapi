@@ -1,59 +1,80 @@
 """
-Database configuration and session management
+Database engine, session factory, and declarative base.
+
+Public surface:
+    engine       — SQLAlchemy Engine (table creation / Alembic migrations)
+    SessionLocal — sessionmaker factory (injected via app.dependencies.get_db)
+    Base         — DeclarativeBase for all ORM models
+
+Do NOT import `get_db` from here — use `app.dependencies` instead.
 """
-import os
-from dotenv import load_dotenv
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+import logging
 
-# Load environment variables from .env file
-load_dotenv()
+from sqlalchemy import Engine, create_engine
+from sqlalchemy.orm import sessionmaker, DeclarativeBase
+from sqlalchemy.pool import NullPool
 
-# Database URL from environment or default to PostgreSQL in Docker
-DATABASE_URL = os.getenv(
-    "DATABASE_URL",
-    "postgresql://avnadmin:changeme@db:5432/defaultdb"  # Docker PostgreSQL - set actual password in .env
-)
+from app.config import settings
 
-# PostgreSQL (use after whitelisting IP in Aiven):
-# Set DATABASE_URL in .env file with actual credentials
+logger = logging.getLogger(__name__)
 
-# Configure engine based on database type
-if DATABASE_URL.startswith("sqlite"):
-    # SQLite configuration
-    engine = create_engine(
-        DATABASE_URL,
-        connect_args={"check_same_thread": False},
-        echo=False
-    )
-    print("✓ Using SQLite database (local file)")
-else:
-    # PostgreSQL configuration
-    engine = create_engine(
-        DATABASE_URL,
+
+# ── Engine factory ────────────────────────────────────────────────────────────
+
+def _build_engine() -> Engine:
+    """Build and return a SQLAlchemy engine from the current Settings."""
+    url = settings.DATABASE_URL
+
+    if url.startswith("sqlite"):
+        # SQLite: NullPool + allow multi-thread access (needed for tests)
+        logger.debug("Engine: SQLite (NullPool)")
+        return create_engine(
+            url,
+            connect_args={"check_same_thread": False},
+            poolclass=NullPool,
+            echo=settings.DB_ECHO,
+        )
+
+    # PostgreSQL (or any other server-side DB)
+    logger.debug("Engine: PostgreSQL (pool_size=%d)", settings.DB_POOL_SIZE)
+    return create_engine(
+        url,
         connect_args={
             "connect_timeout": 10,
-            "options": "-c statement_timeout=30000"
+            "options": "-c statement_timeout=30000",
         },
-        pool_size=5,
-        max_overflow=10,
-        pool_pre_ping=True,
-        echo=False
+        pool_size=settings.DB_POOL_SIZE,
+        max_overflow=settings.DB_MAX_OVERFLOW,
+        pool_pre_ping=settings.DB_POOL_PRE_PING,
+        echo=settings.DB_ECHO,
     )
-    print("✓ Using PostgreSQL database")
 
-# Session factory
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# Base class for models
-Base = declarative_base()
+engine = _build_engine()
 
-# SQLALCHEMY_DATABASE_URL alias (compatibility with some examples)
-SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL")
 
-# ডাটাবেস সেশন পাওয়ার ফাংশন
-def get_db():
+# ── Session factory ───────────────────────────────────────────────────────────
+
+SessionLocal = sessionmaker(
+    bind=engine,
+    autocommit=False,
+    autoflush=False,
+    expire_on_commit=False,  # avoids implicit lazy-loads after commit
+)
+
+
+# ── Declarative base ──────────────────────────────────────────────────────────
+
+class Base(DeclarativeBase):
+    """Project-wide declarative base — every ORM model must inherit from this."""
+
+    pass
+
+
+# ── Legacy helper (kept for backward-compat; prefer app.dependencies.get_db) ──
+
+def get_db():  # pragma: no cover
+    """Yield a DB session. Prefer injecting DBSession from app.dependencies."""
     db = SessionLocal()
     try:
         yield db
