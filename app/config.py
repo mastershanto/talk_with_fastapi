@@ -24,7 +24,7 @@ class Settings(BaseSettings):
     DEBUG: bool = False
 
     # ── Database ──────────────────────────────────────────────────────────────
-    DATABASE_URL: str = "postgresql://avnadmin:changeme@db:5432/defaultdb"
+    DATABASE_URL: str = "postgresql://postgres:password@localhost:5432/real_estate_db"
     DB_POOL_SIZE: int = 5
     DB_MAX_OVERFLOW: int = 10
     DB_POOL_PRE_PING: bool = True

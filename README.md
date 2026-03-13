@@ -18,18 +18,45 @@ This project teaches you:
 
 ## 🚀 Quick Start
 
+### Prerequisites
+- Python 3.10+
+- PostgreSQL 14+ (see [POSTGRES_SETUP.md](./POSTGRES_SETUP.md))
+
+### Running the Application
+
 ```bash
-# 1. Activate virtual environment
+# 1. Set up PostgreSQL (first time only)
+bash setup_postgres.sh
+
+# 2. Activate virtual environment
 source .venv/bin/activate
 
-# 2. Run the server
+# 3. Run the server
 ./run.sh
 
-# 3. Visit API documentation
+# 4. Visit API documentation
 open http://localhost:8000/docs
 ```
 
-## 📁 Project Structure
+**Database:** PostgreSQL (production-ready, fully featured)  
+**Connection:** `postgresql://postgres:password@localhost:5432/real_estate_db`
+
+## �️ Database
+
+This application uses **PostgreSQL** for production-grade reliability and scalability.
+
+### Setup
+- **macOS**: `bash setup_postgres.sh`
+- **Full Guide**: See [POSTGRES_SETUP.md](./POSTGRES_SETUP.md)
+
+### Features
+- ✅ Multi-user, high concurrency
+- ✅ ACID compliance and data integrity
+- ✅ Advanced query optimization
+- ✅ Connection pooling for performance
+- ✅ Production-ready
+
+## �📁 Project Structure
 
 See [ARCHITECTURE.md](./ARCHITECTURE.md) for detailed documentation of each module.
 
