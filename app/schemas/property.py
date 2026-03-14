@@ -2,9 +2,7 @@
 Property schemas.
 """
 from datetime import datetime
-
 from pydantic import BaseModel, ConfigDict, Field
-
 from app.models.property import PropertyType, PropertyStatus
 
 
