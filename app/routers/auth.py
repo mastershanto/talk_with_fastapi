@@ -100,7 +100,7 @@ def register_resend_otp(payload: EmailOnlyRequest, db: DBSession) -> dict:
 
 @router.post("/register/otp-verify")
 def register_verify_otp(payload: VerifyOtpRequest, db: DBSession) -> dict:
-    """Verify registration OTP and mark user email verified."""
+    """Verify registration OTP, mark user email verified, and return access token."""
     email = payload.email.strip().lower()
     user = auth_repo.get_user_by_email(db, email)
     if not user:
@@ -111,10 +111,15 @@ def register_verify_otp(payload: VerifyOtpRequest, db: DBSession) -> dict:
         raise UnauthorizedException("Invalid or expired OTP")
 
     auth_repo.mark_email_verified(db, user)
+    db.refresh(user)
+
+    access_token = auth_repo.generate_login_token(user)
+    login_data = LoginData(access_token=access_token, token_type="bearer", user=UserResponse.model_validate(user))
+
     return {
         "success": True,
-        "message": "Email verified successfully",
-        "data": {"email": email},
+        "message": "OTP verified successfully",
+        "data": login_data.model_dump(),
         "code": 200,
     }
 
@@ -222,10 +227,15 @@ def reset_password(payload: ResetPasswordRequest, db: DBSession) -> dict:
         raise UnauthorizedException("Invalid reset token")
 
     auth_repo.set_password(db, user, new_password=payload.new_password)
+    db.refresh(user)
+
+    access_token = auth_repo.generate_login_token(user)
+    login_data = LoginData(access_token=access_token, token_type="bearer", user=UserResponse.model_validate(user))
+
     return {
         "success": True,
-        "message": "Password reset successful",
-        "data": {"email": user.email},
+        "message": "OTP verified successfully",
+        "data": login_data.model_dump(),
         "code": 200,
     }
 
