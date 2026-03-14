@@ -65,6 +65,20 @@ class ResetPasswordRequest(BaseModel):
     new_password: str = Field(..., min_length=6, max_length=128)
 
 
+class UpdateProfileRequest(BaseModel):
+    """Profile update fields (all optional)."""
+
+    name: str | None = Field(None, min_length=1, max_length=100)
+    age: float | None = Field(None, gt=0, lt=150)
+    height: float | None = Field(None, gt=0)
+    weight: float | None = Field(None, gt=0)
+    gender: str | None = Field(None, max_length=50)
+    goal: str | None = Field(None, max_length=255)
+    days_in_week: int | None = Field(None, ge=0, le=7)
+    time_in_day: str | None = Field(None, max_length=50)
+    workout_duration: int | None = Field(None, ge=0)
+
+
 # ── Responses ───────────────────────────────────────────────────────────────
 
 

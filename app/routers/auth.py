@@ -11,9 +11,12 @@ Email delivery for OTP is currently logged for local development.
 
 from __future__ import annotations
 
+import os
+from pathlib import Path
+
 from sqlalchemy.orm import Session
 
-from fastapi import APIRouter
+from fastapi import APIRouter, File, UploadFile, Form
 
 from app.dependencies import DBSession
 from app.exceptions import ConflictException, NotFoundException, UnauthorizedException, BadRequestException
@@ -32,6 +35,7 @@ from app.schemas.auth import (
     RegisterRequest,
     ResetPasswordRequest,
     ResetTokenData,
+    UpdateProfileRequest,
     UserResponse,
     VerifyOtpRequest,
 )
@@ -247,5 +251,120 @@ def profile(current_user: CurrentUser) -> dict:
         "success": True,
         "message": "User data retrieved successfully",
         "data": UserResponse.model_validate(current_user).model_dump(),
+        "code": 200,
+    }
+
+
+@router.put("/profile")
+def update_profile(
+    current_user: CurrentUser,
+    db: DBSession,
+    name: str | None = Form(None),
+    age: float | None = Form(None),
+    height: float | None = Form(None),
+    weight: float | None = Form(None),
+    gender: str | None = Form(None),
+    goal: str | None = Form(None),
+    days_in_week: int | None = Form(None),
+    time_in_day: str | None = Form(None),
+    workout_duration: int | None = Form(None),
+    refer_photo: UploadFile | None = File(None),
+) -> dict:
+    """Update the authenticated user's profile with optional file upload."""
+    user = db.get(User, current_user.id)
+    if not user:
+        raise NotFoundException("User not found")
+
+    # Update text fields
+    if name is not None:
+        user.name = name
+    if age is not None:
+        user.age = float(age)
+    if height is not None:
+        user.height = float(height)
+    if weight is not None:
+        user.weight = float(weight)
+    if gender is not None:
+        user.gender = gender
+    if goal is not None:
+        user.goal = goal
+    if days_in_week is not None:
+        user.days_in_week = int(days_in_week)
+    if time_in_day is not None:
+        user.time_in_day = time_in_day
+    if workout_duration is not None:
+        user.workout_duration = int(workout_duration)
+
+    # Handle file upload
+    if refer_photo:
+        # Create uploads directory if it doesn't exist
+        uploads_dir = Path("uploads")
+        uploads_dir.mkdir(exist_ok=True)
+
+        # Save file with user ID prefix for uniqueness
+        file_extension = Path(refer_photo.filename).suffix
+        safe_filename = f"user_{user.id}_refer_photo{file_extension}"
+        file_path = uploads_dir / safe_filename
+
+        # Write file to disk
+        contents = refer_photo.file.read()
+        with open(file_path, "wb") as f:
+            f.write(contents)
+
+        # Store filename in database
+        user.refer_photo = safe_filename
+
+    db.commit()
+    db.refresh(user)
+
+    return {
+        "success": True,
+        "message": "Profile updated successfully",
+        "data": UserResponse.model_validate(user).model_dump(),
+        "code": 200,
+    }
+
+
+@router.post("/logout")
+def logout(current_user: CurrentUser) -> dict:
+    """Logout the authenticated user (client discards JWT token).
+    
+    Since JWT tokens are stateless, logout simply confirms the action.
+    The client should discard the token.
+    """
+    return {
+        "success": True,
+        "message": "Logged out successfully",
+        "data": {"email": current_user.email},
+        "code": 200,
+    }
+
+
+@router.delete("/account")
+def delete_account(current_user: CurrentUser, db: DBSession) -> dict:
+    """Delete the authenticated user's account permanently."""
+    user = db.get(User, current_user.id)
+    if not user:
+        raise NotFoundException("User not found")
+
+    email = user.email
+    
+    # Delete uploaded files if any
+    if user.refer_photo:
+        file_path = Path("uploads") / user.refer_photo
+        if file_path.exists():
+            try:
+                file_path.unlink()
+            except OSError:
+                pass  # File deletion failure doesn't block account deletion
+
+    # Delete user from database
+    db.delete(user)
+    db.commit()
+
+    return {
+        "success": True,
+        "message": "Account deleted successfully",
+        "data": {"email": email},
         "code": 200,
     }
