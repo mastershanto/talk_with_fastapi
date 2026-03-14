@@ -29,6 +29,7 @@ from app.otp_service import (
 )
 from app.repositories.auth import auth_repo
 from app.schemas.auth import (
+    ChangePasswordRequest,
     EmailOnlyRequest,
     LoginData,
     LoginRequest,
@@ -302,6 +303,9 @@ def update_profile(
         uploads_dir.mkdir(exist_ok=True)
 
         # Save file with user ID prefix for uniqueness
+        if not refer_photo.filename:
+            raise BadRequestException("File must have a valid filename")
+        
         file_extension = Path(refer_photo.filename).suffix
         safe_filename = f"user_{user.id}_refer_photo{file_extension}"
         file_path = uploads_dir / safe_filename
@@ -320,6 +324,33 @@ def update_profile(
     return {
         "success": True,
         "message": "Profile updated successfully",
+        "data": UserResponse.model_validate(user).model_dump(),
+        "code": 200,
+    }
+
+
+@router.put("/change-password")
+def change_password(current_user: CurrentUser, payload: ChangePasswordRequest, db: DBSession) -> dict:
+    """Change the authenticated user's password.
+    
+    Requires verification of current password.
+    """
+    user = db.get(User, current_user.id)
+    if not user:
+        raise NotFoundException("User not found")
+
+    # Verify current password matches
+    from app.auth_utils import verify_password
+    if not verify_password(payload.current_password, user.password_hash):
+        raise UnauthorizedException("Current password is incorrect")
+
+    # Update to new password
+    auth_repo.set_password(db, user, new_password=payload.password)
+    db.refresh(user)
+
+    return {
+        "success": True,
+        "message": "Password changed successfully",
         "data": UserResponse.model_validate(user).model_dump(),
         "code": 200,
     }

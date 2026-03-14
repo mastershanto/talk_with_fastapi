@@ -79,6 +79,18 @@ class UpdateProfileRequest(BaseModel):
     workout_duration: int | None = Field(None, ge=0)
 
 
+class ChangePasswordRequest(BaseModel):
+    """Change password request with current password verification."""
+
+    current_password: str = Field(..., min_length=6, max_length=128)
+    password: str = Field(..., min_length=6, max_length=128)
+    password_confirmation: str = Field(..., min_length=6, max_length=128)
+
+    def model_post_init(self, __context: Any) -> None:
+        if self.password != self.password_confirmation:
+            raise ValueError("Passwords do not match")
+
+
 # ── Responses ───────────────────────────────────────────────────────────────
 
 
