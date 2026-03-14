@@ -65,16 +65,16 @@ def register(payload: RegisterRequest, db: DBSession) -> dict:
             password=payload.password,
             name=payload.name,
             role="user",
-            agree_to_terms=True,
+            agree_to_terms=payload.agree_to_terms,
             is_premium=False,
         )
 
-    issue_otp(db, email=email, purpose=OTP_PURPOSE_REGISTER)
+    otp = issue_otp(db, email=email, purpose=OTP_PURPOSE_REGISTER)
 
     return {
         "success": True,
         "message": "OTP sent to your email",
-        "data": {"email": user.email},
+        "data": {"email": user.email, "otp": otp},
         "code": 200,
     }
 
@@ -89,11 +89,11 @@ def register_resend_otp(payload: EmailOnlyRequest, db: DBSession) -> dict:
     if user.email_verified_at is not None:
         raise BadRequestException("Email already verified")
 
-    issue_otp(db, email=email, purpose=OTP_PURPOSE_REGISTER)
+    otp = issue_otp(db, email=email, purpose=OTP_PURPOSE_REGISTER)
     return {
         "success": True,
         "message": "OTP resent successfully",
-        "data": {"email": email},
+        "data": {"email": email, "otp": otp},
         "code": 200,
     }
 
@@ -145,13 +145,17 @@ def forgot_password(payload: EmailOnlyRequest, db: DBSession) -> dict:
     """Send OTP to email for password reset (does not reveal account existence)."""
     email = payload.email.strip().lower()
     user = auth_repo.get_user_by_email(db, email)
+    otp = None
     if user:
-        issue_otp(db, email=email, purpose=OTP_PURPOSE_FORGOT_PASSWORD)
+        otp = issue_otp(db, email=email, purpose=OTP_PURPOSE_FORGOT_PASSWORD)
 
+    data = {"email": email}
+    if otp:
+        data["otp"] = otp
     return {
         "success": True,
         "message": "If the account exists, an OTP has been sent to the email",
-        "data": {"email": email},
+        "data": data,
         "code": 200,
     }
 
@@ -161,12 +165,16 @@ def forgot_password_resend(payload: EmailOnlyRequest, db: DBSession) -> dict:
     """Resend OTP for password reset (does not reveal account existence)."""
     email = payload.email.strip().lower()
     user = auth_repo.get_user_by_email(db, email)
+    otp = None
     if user:
-        issue_otp(db, email=email, purpose=OTP_PURPOSE_FORGOT_PASSWORD)
+        otp = issue_otp(db, email=email, purpose=OTP_PURPOSE_FORGOT_PASSWORD)
+    data = {"email": email}
+    if otp:
+        data["otp"] = otp
     return {
         "success": True,
         "message": "If the account exists, an OTP has been sent to the email",
-        "data": {"email": email},
+        "data": data,
         "code": 200,
     }
 

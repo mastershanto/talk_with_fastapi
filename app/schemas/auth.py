@@ -38,6 +38,12 @@ class RegisterRequest(BaseModel):
     name: str = Field(..., min_length=1, max_length=100)
     email: EmailStr
     password: str = Field(..., min_length=6, max_length=128)
+    confirm_password: str = Field(..., min_length=6, max_length=128)
+    agree_to_terms: bool = Field(default=False)
+
+    def model_post_init(self, __context: Any) -> None:
+        if self.password != self.confirm_password:
+            raise ValueError("Passwords do not match")
 
 
 class LoginRequest(BaseModel):

@@ -63,8 +63,8 @@ def send_otp(email: str, purpose: str, otp: str) -> None:
     print(f"[OTP:{purpose}] {email} -> {otp}")
 
 
-def issue_otp(db: Session, *, email: str, purpose: str) -> None:
-    """Issue (and send) an OTP for the given email + purpose."""
+def issue_otp(db: Session, *, email: str, purpose: str) -> str:
+    """Issue (and send) an OTP for the given email + purpose. Returns the OTP code."""
     normalized_email = _normalize_email(email)
 
     # Throttle resends: check the most recent OTP.
@@ -111,6 +111,7 @@ def issue_otp(db: Session, *, email: str, purpose: str) -> None:
     db.commit()
 
     send_otp(normalized_email, purpose, otp)
+    return otp
 
 
 def verify_otp(db: Session, *, email: str, purpose: str, otp: str) -> bool:
