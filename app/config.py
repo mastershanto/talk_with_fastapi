@@ -37,6 +37,11 @@ class Settings(BaseSettings):
     DEFAULT_PAGE_SIZE: int = 20
     MAX_PAGE_SIZE: int = 100
 
+    # ── Authentication ────────────────────────────────────────────────────────
+    SECRET_KEY: str = "your-secret-key-change-in-production"
+    ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440  # 24 hours
+
     # ── pydantic-settings meta ─────────────────────────────────────────────────
     model_config = SettingsConfigDict(
         env_file=".env",

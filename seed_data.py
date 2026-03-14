@@ -8,6 +8,7 @@ from sqlalchemy.orm import sessionmaker
 from app.config import settings
 from app.models.user import User
 from app.models.property import Property, PropertyType, PropertyStatus
+from app.auth_utils import hash_password
 
 # Database setup
 engine = create_engine(str(settings.DATABASE_URL))
@@ -59,6 +60,11 @@ DESCRIPTIONS = [
 ]
 
 
+def _make_email(first: str, last: str) -> str:
+    suffix = random.randint(1, 9999)
+    return f"{first.lower()}.{last.lower()}{suffix}@example.com"
+
+
 def generate_users(count: int) -> list[User]:
     """Generate sample users."""
     users = []
@@ -67,7 +73,18 @@ def generate_users(count: int) -> list[User]:
         last_name = random.choice(LAST_NAMES)
         name = f"{first_name} {last_name}"
         age = random.randint(18, 80)
-        users.append(User(name=name, age=age))
+        first, last = name.split(" ", 1)
+        users.append(
+            User(
+                name=name,
+                email=_make_email(first, last),
+                password_hash=hash_password("password123"),
+                role="user",
+                agree_to_terms=True,
+                is_premium=False,
+                age=float(age),
+            )
+        )
     return users
 
 

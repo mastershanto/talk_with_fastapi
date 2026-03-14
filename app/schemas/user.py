@@ -1,60 +1,42 @@
-"""
-User request / response schemas.
+"""User request / response schemas.
 
-Hierarchy
----------
-UserBase                — shared validation rules
-  UserCreate            — POST /users  body
-  UserUpdate            — PUT  /users/{id}  body (all fields optional)
-  UserResponse          — serialised user (no items)
-  UserWithItemsResponse — serialised user including their owned items
+These schemas are used by the legacy `/api/v1/users` CRUD endpoints.
+The project now has dedicated auth endpoints under `/api/v1/auth/*`.
 """
+
+from __future__ import annotations
+
 from datetime import datetime
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 from app.schemas.property import PropertyResponse
 
 
 class UserBase(BaseModel):
-    """Fields shared by all user schemas."""
-
-    name: str = Field(
-        ...,
-        min_length=1,
-        max_length=100,
-        examples=["Alice"],
-    )
-    age: int = Field(
-        ...,
-        gt=0,
-        lt=150,
-        examples=[25],
-        description="Age in years (must be 1-149)",
-    )
+    name: str = Field(..., min_length=1, max_length=100, examples=["Alice"])
+    email: EmailStr
+    age: float | None = Field(None, gt=0, lt=150, description="Age in years")
 
 
 class UserCreate(UserBase):
-    """Payload for POST /api/v1/users."""
+    """Payload for POST /api/v1/users.
 
-    pass
+    Note: This is separate from `/api/v1/auth/register`.
+    """
+
+    password: str = Field(..., min_length=6, max_length=128)
 
 
 class UserUpdate(BaseModel):
-    """
-    Payload for PUT /api/v1/users/{id}.
-
-    All fields are optional — only provided fields are updated.
-    """
-
     name: str | None = Field(None, min_length=1, max_length=100)
-    age: int | None = Field(None, gt=0, lt=150)
+    email: EmailStr | None = None
+    age: float | None = Field(None, gt=0, lt=150)
 
 
 class UserResponse(UserBase):
-    """Serialised user — no items included (use UserWithItemsResponse when needed)."""
-
     id: int
+    role: str
     created_at: datetime
     updated_at: datetime
 
@@ -62,6 +44,4 @@ class UserResponse(UserBase):
 
 
 class UserWithItemsResponse(UserResponse):
-    """Serialised user including the list of properties they own."""
-
     properties: list[PropertyResponse] = []

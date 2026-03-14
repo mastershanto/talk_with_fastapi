@@ -10,5 +10,6 @@ Usage anywhere in the project:
 """
 from app.models.user import User
 from app.models.property import Property
+from app.models.otp import EmailOTP
 
-__all__ = ["User", "Property"]
+__all__ = ["User", "Property", "EmailOTP"]
