@@ -22,6 +22,10 @@ from app.domains.properties.ports import PropertyRepository
 from app.domains.properties.service import PropertyService
 from app.infrastructure.sqlalchemy.users import SqlAlchemyUserRepository
 from app.infrastructure.sqlalchemy.properties import SqlAlchemyPropertyRepository
+from app.domains.auth.ports import AuthRepository, OtpService
+from app.domains.auth.service import AuthService
+from app.infrastructure.sqlalchemy.auth import SqlAlchemyAuthRepository
+from app.infrastructure.sqlalchemy.otp import SqlAlchemyOtpService
 
 
 # ── Database session ──────────────────────────────────────────────────────────
@@ -96,3 +100,21 @@ def get_property_service(
 
 UserServiceDep = Annotated[UserService, Depends(get_user_service)]
 PropertyServiceDep = Annotated[PropertyService, Depends(get_property_service)]
+
+
+def get_auth_repository(db: Session = Depends(get_db)) -> AuthRepository:
+    return SqlAlchemyAuthRepository(db)
+
+
+def get_otp_service(db: Session = Depends(get_db)) -> OtpService:
+    return SqlAlchemyOtpService(db)
+
+
+def get_auth_service(
+    repo: AuthRepository = Depends(get_auth_repository),
+    otp: OtpService = Depends(get_otp_service),
+) -> AuthService:
+    return AuthService(repo=repo, otp=otp)
+
+
+AuthServiceDep = Annotated[AuthService, Depends(get_auth_service)]
