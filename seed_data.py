@@ -1,6 +1,5 @@
 """Seed script to populate database with sample data."""
 import random
-import sys
 import argparse
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -100,7 +99,7 @@ def generate_properties(count: int, user_ids: list[int]) -> list[Property]:
         status = random.choice(list(PropertyStatus))
         area_sqft = round(random.uniform(800, 10000), 0)
         owner_id = random.choice(user_ids)
-        
+
         properties.append(Property(
             title=title,
             description=description,
@@ -117,14 +116,14 @@ def generate_properties(count: int, user_ids: list[int]) -> list[Property]:
 def seed_database(force: bool = False):
     """Populate database with sample data."""
     session = SessionLocal()
-    
+
     try:
         # Check if data already exists
         user_count = session.query(User).count()
         if user_count > 0 and not force:
             print(f"⚠️  Database already contains {user_count} users. Use --force to re-seed.")
             return
-        
+
         # Clear existing data if force is enabled
         if force and user_count > 0:
             print("🗑️  Clearing existing data...")
@@ -132,32 +131,32 @@ def seed_database(force: bool = False):
             session.query(User).delete()
             session.commit()
             print("✅ Existing data cleared")
-        
+
         print("🌱 Starting database seeding...")
-        
+
         # Generate and add users
         print("📝 Creating 100 users...")
         users = generate_users(100)
         session.add_all(users)
         session.commit()
-        
+
         # Get user IDs
         user_ids = [user.id for user in session.query(User).all()]
         print(f"✅ Created {len(user_ids)} users")
-        
+
         # Generate and add properties
         print("🏠 Creating 100+ properties...")
         properties = generate_properties(120, user_ids)  # 120 properties for variety
         session.add_all(properties)
         session.commit()
-        
+
         property_count = session.query(Property).count()
         print(f"✅ Created {property_count} properties")
-        
+
         print("🎉 Seeding completed successfully!")
         print(f"   - Users: {len(user_ids)}")
         print(f"   - Properties: {property_count}")
-        
+
     except Exception as e:
         session.rollback()
         print(f"❌ Error during seeding: {e}")
@@ -170,5 +169,5 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Seed the database with sample data")
     parser.add_argument("--force", action="store_true", help="Force re-seeding (clears existing data)")
     args = parser.parse_args()
-    
+
     seed_database(force=args.force)

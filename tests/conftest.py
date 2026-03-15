@@ -14,3 +14,4 @@ _db_path = _tmp_dir / "test.db"
 os.environ.setdefault("DATABASE_URL", f"sqlite+pysqlite:///{_db_path.as_posix()}")
 os.environ.setdefault("DEBUG", "false")
 os.environ.setdefault("SECRET_KEY", "test-secret-key")
+os.environ.setdefault("DB_AUTO_CREATE_TABLES", "true")

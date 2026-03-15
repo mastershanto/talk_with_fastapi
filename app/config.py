@@ -30,6 +30,10 @@ class Settings(BaseSettings):
     DB_POOL_PRE_PING: bool = True
     DB_ECHO: bool = False  # Set True to log every SQL statement
 
+    # Safety switch: in production, prefer running `alembic upgrade head`.
+    # Tests/dev can set DB_AUTO_CREATE_TABLES=true.
+    DB_AUTO_CREATE_TABLES: bool = False
+
     # ── CORS ──────────────────────────────────────────────────────────────────
     ALLOWED_ORIGINS: list[str] = ["*"]
 

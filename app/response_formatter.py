@@ -11,7 +11,6 @@ All responses follow the standard format:
 """
 
 from typing import Any
-from app.schemas.common import ApiResponse
 
 
 def success_response(
@@ -21,15 +20,15 @@ def success_response(
 ) -> dict:
     """
     Create a standard success response.
-    
+
     Args:
         data: Response payload (list, dict, object, etc.)
         message: Human-readable success message
         code: HTTP status code
-        
+
     Returns:
         Standard response envelope dict
-        
+
     Example:
         return success_response(
             data=user_dict,
@@ -52,12 +51,12 @@ def list_response(
 ) -> dict:
     """
     Create a response for list endpoints.
-    
+
     Args:
         items: List of items
         message: Human-readable message
         code: HTTP status code
-        
+
     Returns:
         Standard response envelope dict
     """
@@ -75,12 +74,12 @@ def error_response(
 ) -> dict:
     """
     Create a standard error response.
-    
+
     Args:
         message: Error message
         code: HTTP status code
         data: Optional additional error details
-        
+
     Returns:
         Standard response envelope dict
     """

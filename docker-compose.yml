@@ -30,6 +30,7 @@ services:
     container_name: talk_with_fastapi_api
     environment:
       DATABASE_URL: ${DATABASE_URL:-postgresql://avnadmin:changeme@db:5432/defaultdb}
+      DB_AUTO_CREATE_TABLES: ${DB_AUTO_CREATE_TABLES:-false}
       PYTHONUNBUFFERED: 1
     ports:
       - "8000:8000"
@@ -38,9 +39,10 @@ services:
         condition: service_healthy
     command: >
       sh -c "
-      echo 'Waiting for database to be ready...' &&
-      sleep 5 &&
-      uvicorn app.app:app --host 0.0.0.0 --port 8000 --reload
+      echo 'Running migrations...' &&
+      python -m alembic upgrade head &&
+      echo 'Starting API...' &&
+      uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
       "
     volumes:
       - .:/app

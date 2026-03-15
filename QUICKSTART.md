@@ -10,13 +10,13 @@
 ### 2. Direct uvicorn command:
 ```bash
 source .venv/bin/activate
-uvicorn app.app:app --reload
+uvicorn app.main:app --reload
 ```
 
 ### 3. With custom host/port:
 ```bash
 source .venv/bin/activate
-uvicorn app.app:app --reload --host 0.0.0.0 --port 8000
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 ## 🛑 Stop Server
@@ -74,7 +74,7 @@ curl -X DELETE http://localhost:8000/users/1
 lsof -ti:8000 | xargs kill -9
 
 # Or use different port
-uvicorn app.app:app --reload --port 8001
+uvicorn app.main:app --reload --port 8001
 ```
 
 ### If database connection fails:

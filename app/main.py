@@ -110,7 +110,10 @@ def _seed_sample_data() -> None:
 async def lifespan(app: FastAPI):  # noqa: ARG001
     """Run startup tasks before yielding, then shutdown tasks after."""
     logger.info("Starting %s v%s ...", settings.APP_NAME, settings.APP_VERSION)
-    _create_tables()
+    if settings.DB_AUTO_CREATE_TABLES:
+        _create_tables()
+    else:
+        logger.info("DB auto-create disabled. Run Alembic migrations to manage schema.")
     # _seed_sample_data()  # Skipped for production readiness
     yield
     logger.info("Shutdown complete.")

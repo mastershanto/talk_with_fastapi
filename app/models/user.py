@@ -1,10 +1,18 @@
 """User ORM model."""
+
+from __future__ import annotations
+
 from datetime import datetime
+from typing import TYPE_CHECKING
+
 from sqlalchemy import Integer, String, Boolean, DateTime, Float, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
 from app.models.base import TimestampMixin
+
+if TYPE_CHECKING:
+    from app.models.property import Property
 
 
 class User(TimestampMixin, Base):
@@ -66,7 +74,7 @@ class User(TimestampMixin, Base):
     target_body_fat: Mapped[float | None] = mapped_column(Float, nullable=True)
     target_weight: Mapped[float | None] = mapped_column(Float, nullable=True)
 
-    properties: Mapped[list["Property"]] = relationship(  # type: ignore[name-defined]
+    properties: Mapped[list[Property]] = relationship(
         "Property",
         back_populates="owner",
         cascade="all, delete-orphan",

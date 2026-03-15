@@ -19,6 +19,7 @@ This project teaches you:
 ## 🚀 Quick Start
 
 ### Prerequisites
+
 - Python 3.10+
 - PostgreSQL 14+ (see [POSTGRES_SETUP.md](./POSTGRES_SETUP.md))
 
@@ -41,26 +42,28 @@ open http://localhost:8000/docs
 **Database:** PostgreSQL (production-ready, fully featured)  
 **Connection:** `postgresql://postgres:password@localhost:5432/real_estate_db`
 
-## �️ Database
+## Database
 
 This application uses **PostgreSQL** for production-grade reliability and scalability.
 
 ### Setup
+
 - **macOS**: `bash setup_postgres.sh`
 - **Full Guide**: See [POSTGRES_SETUP.md](./POSTGRES_SETUP.md)
 
 ### Features
+
 - ✅ Multi-user, high concurrency
 - ✅ ACID compliance and data integrity
 - ✅ Advanced query optimization
 - ✅ Connection pooling for performance
 - ✅ Production-ready
 
-## �📁 Project Structure
+## Project Structure
 
 See [ARCHITECTURE.md](./ARCHITECTURE.md) for detailed documentation of each module.
 
-```
+```text
 app/
 ├── config.py              # Configuration and settings
 ├── database.py            # SQLAlchemy setup
@@ -78,6 +81,7 @@ app/
 This project strictly follows Python naming conventions:
 
 ### Variables
+
 ```python
 # Single instances: lowercase, snake_case
 user = User(name="John")
@@ -89,6 +93,7 @@ properties_list = property_crud.get_multi(db)
 ```
 
 ### Functions & Methods
+
 ```python
 # Descriptive verb + noun, lowercase
 def get_user(user_id: int) -> User: ...
@@ -97,6 +102,7 @@ def list_properties(skip: int = 0, limit: int = 10) -> list[Property]: ...
 ```
 
 ### Classes
+
 ```python
 # PascalCase, descriptive name
 class PropertyResponse(BaseModel): ...
@@ -105,6 +111,7 @@ class NotFoundException(AppException): ...
 ```
 
 ### Constants
+
 ```python
 # UPPER_CASE for constants
 MAX_PAGE_SIZE = 100
@@ -115,22 +122,26 @@ DATABASE_TIMEOUT = 30
 ## 📚 Learning Path
 
 ### Phase 1: Fundamentals (30 mins)
+
 1. Read [ARCHITECTURE.md](./ARCHITECTURE.md)
 2. Explore `app/models/property.py` - Understand ORM models
 3. Explore `app/schemas/property.py` - Understand validation
 
 ### Phase 2: Intermediate (1 hour)
+
 1. Study `app/crud/base.py` - Generic CRUD pattern
 2. Study `app/crud/property.py` - Specific implementation
 3. Study `app/routers/properties.py` - API endpoints
 
 ### Phase 3: Advanced (1.5 hours)
+
 1. Study `app/dependencies.py` - Dependency injection
 2. Study `app/exceptions.py` - Error handling
 3. Study `app/main.py` - Application factory
 4. Explore integration with SQLAdmin
 
 ### Phase 4: Hands-On (2+ hours)
+
 1. Add a new field to Model
 2. Update Schema to include new field
 3. Test via API documentation
@@ -139,11 +150,13 @@ DATABASE_TIMEOUT = 30
 ## 🔌 API Endpoints
 
 ### Base URL
-```
+
+```text
 http://localhost:8000/api/v1
 ```
 
 ### Users Endpoints
+
 ```http
 GET    /users              # List users (paginated)
 GET    /users/{user_id}    # Get specific user
@@ -153,6 +166,7 @@ DELETE /users/{user_id}    # Delete user
 ```
 
 ### Properties Endpoints
+
 ```http
 GET    /properties              # List properties (paginated)
 GET    /properties/{id}         # Get specific property
@@ -163,46 +177,86 @@ DELETE /properties/{id}         # Delete property
 
 ## 📖 Documentation URLs
 
-- **Swagger UI**: http://localhost:8000/docs
-- **ReDoc**: http://localhost:8000/redoc
-- **Admin Panel**: http://localhost:8000/admin/
+- **Swagger UI**: <http://localhost:8000/docs>
+- **ReDoc**: <http://localhost:8000/redoc>
+- **Admin Panel**: <http://localhost:8000/admin/>
 - **Architecture Guide**: [ARCHITECTURE.md](./ARCHITECTURE.md)
 
 ## 🏗️ Architecture Highlights
 
 ### 1. **Models** (app/models/)
+
 SQLAlchemy ORM models define the database schema
 
 ### 2. **Schemas** (app/schemas/)
+
 Pydantic models for request validation and response serialization
 
 ### 3. **CRUD Operations** (app/crud/)
+
 Generic CRUD base class with specific implementations
 
 ### 4. **Routers** (app/routers/)
+
 FastAPI endpoint definitions with dependency injection
 
 ### 5. **Dependency Injection** (app/dependencies.py)
+
 Reusable services and database session management
 
 ## 🔄 Complete Data Flow
 
-```
+```text
 HTTP Request → Router → Dependencies → Validation → CRUD → Database → Response
 ```
 
 ## ✅ Best Practices Demonstrated
 
-1. ✅ **Type Hints** - Full type safety
-2. ✅ **Docstrings** - Comprehensive documentation
-3. ✅ **Error Handling** - Custom exceptions
-4. ✅ **Configuration** - Environment-based settings
-5. ✅ **DRY Principle** - Generic base classes
-6. ✅ **Separation of Concerns** - Clear module responsibilities
-7. ✅ **Dependency Injection** - Loosely coupled services
-8. ✅ **Database Sessions** - Proper lifecycle management
-9. ✅ **Admin Interface** - SQLAdmin integration
-10. ✅ **Pagination** - Validated, configurable
+- ✅ **Type Hints** - Full type safety
+- ✅ **Docstrings** - Comprehensive documentation
+- ✅ **Error Handling** - Custom exceptions
+- ✅ **Configuration** - Environment-based settings
+- ✅ **DRY Principle** - Generic base classes
+- ✅ **Separation of Concerns** - Clear module responsibilities
+- ✅ **Dependency Injection** - Loosely coupled services
+- ✅ **Database Sessions** - Proper lifecycle management
+- ✅ **Admin Interface** - SQLAdmin integration
+- ✅ **Pagination** - Validated, configurable
+
+## Developer Workflow (recommended)
+
+This repo is set up to scale with consistent tooling and CI guardrails.
+
+### Install dev dependencies
+
+```bash
+python -m pip install -r requirements-dev.txt
+```
+
+### Enable pre-commit hooks
+
+```bash
+pre-commit install
+```
+
+### Common commands
+
+```bash
+make lint
+make test
+make ci
+make db-upgrade
+```
+
+### Migrations (Alembic)
+
+```bash
+python -m alembic upgrade head
+python -m alembic revision --autogenerate -m "add_field"
+```
+
+By default, the app does not auto-create tables on startup.
+Set `DB_AUTO_CREATE_TABLES=true` for quick local/dev use, and use Alembic in production.
 
 ## 📝 Common Tasks
 
@@ -233,8 +287,7 @@ Edit `.env` to configure database and application settings.
 
 ---
 
-**Happy Learning! 📚**
-- ReDoc: http://localhost:8000/redoc
+## Happy Learning
 
 ## 🔧 Environment Variables
 

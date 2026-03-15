@@ -105,6 +105,22 @@ Success responses follow:
 
 Helpers live in `app/response_formatter.py`.
 
+## Migrations (Alembic)
+
+This project supports **migration-driven schema changes** via Alembic.
+
+- Config: `alembic.ini`, `alembic/env.py`
+- Initial revision: `alembic/versions/`
+
+Recommended workflow:
+
+```bash
+python -m alembic upgrade head
+python -m alembic revision --autogenerate -m "add_field"
+```
+
+Startup schema creation is controlled by `DB_AUTO_CREATE_TABLES` (disabled by default).
+
 ## Adding a new feature quickly
 
 1. Scaffold the module:

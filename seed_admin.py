@@ -8,6 +8,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from app.config import settings
+from app.database import Base
 from app.models.user import User
 from app.auth_utils import hash_password
 
@@ -15,21 +16,19 @@ from app.auth_utils import hash_password
 engine = create_engine(str(settings.DATABASE_URL))
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# Create tables if they don't exist
-from app.database import Base
 Base.metadata.create_all(bind=engine)
 
 def seed_admin_user():
     """Create an admin user for testing."""
     db = SessionLocal()
-    
+
     try:
         # Check if admin user already exists
         existing_user = db.query(User).filter(User.email == "admin@gmail.com").first()
         if existing_user:
             print("✓ Admin user already exists")
             return
-        
+
         # Create admin user
         admin_user = User(
             name="Admin User",
@@ -53,15 +52,15 @@ def seed_admin_user():
             target_body_fat=None,
             target_weight=None,
         )
-        
+
         db.add(admin_user)
         db.commit()
-        
+
         print("✓ Admin user created successfully!")
-        print(f"  Email: admin@gmail.com")
-        print(f"  Password: password123")
-        print(f"  Role: admin")
-        
+        print("  Email: admin@gmail.com")
+        print("  Password: password123")
+        print("  Role: admin")
+
     except Exception as e:
         db.rollback()
         print(f"✗ Error creating admin user: {e}")
