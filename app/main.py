@@ -17,6 +17,7 @@ import signal
 import threading
 import types
 from contextlib import asynccontextmanager
+from collections.abc import AsyncIterator
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -103,7 +104,7 @@ def _seed_sample_data() -> None:
 # ── Lifespan ──────────────────────────────────────────────────────────────────
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):  # noqa: ARG001
+async def lifespan(app: FastAPI) -> AsyncIterator[None]:  # noqa: ARG001
     """Run startup tasks before yielding, then shutdown tasks after."""
     logger.info("Starting %s v%s ...", settings.APP_NAME, settings.APP_VERSION)
     if settings.DB_AUTO_CREATE_TABLES:

@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.auth_utils import hash_password
 from app.domains.users.ports import UserRepository, UserRecord
-from app.repositories.user import user_crud
+from app.models.user import User
 from app.schemas.user import UserCreate, UserUpdate
 
 
@@ -14,23 +16,46 @@ class SqlAlchemyUserRepository(UserRepository):
         self._db = db
 
     def list(self, *, skip: int, limit: int) -> list[UserRecord]:
-        return user_crud.get_multi(self._db, skip=skip, limit=limit)
+        stmt = select(User).offset(skip).limit(limit)
+        return list(self._db.scalars(stmt).all())
 
     def get(self, user_id: int) -> UserRecord | None:
-        return user_crud.get(self._db, user_id)
+        return self._db.get(User, user_id)
 
     def create(self, *, payload: UserCreate) -> UserRecord:
-        return user_crud.create(self._db, obj_in=payload)
+        data = payload.model_dump(exclude={"password"})
+        data["email"] = str(payload.email).strip().lower()
+        data["password_hash"] = hash_password(payload.password)
+        data.setdefault("role", "user")
+        data.setdefault("agree_to_terms", True)
+        data.setdefault("is_premium", False)
+
+        db_obj = User(**data)
+        self._db.add(db_obj)
+        self._db.commit()
+        self._db.refresh(db_obj)
+        return db_obj
 
     def update(self, user_id: int, *, payload: UserUpdate) -> UserRecord | None:
-        db_user = user_crud.get(self._db, user_id)
+        db_user = self._db.get(User, user_id)
         if not db_user:
             return None
-        return user_crud.update(self._db, db_obj=db_user, obj_in=payload)
+
+        data = payload.model_dump(exclude_unset=True)
+        if "email" in data and data["email"] is not None:
+            data["email"] = str(data["email"]).strip().lower()
+
+        for field, value in data.items():
+            setattr(db_user, field, value)
+
+        self._db.commit()
+        self._db.refresh(db_user)
+        return db_user
 
     def delete(self, user_id: int) -> bool:
-        db_user = user_crud.get(self._db, user_id)
+        db_user = self._db.get(User, user_id)
         if not db_user:
             return False
-        user_crud.remove(self._db, record_id=user_id)
+        self._db.delete(db_user)
+        self._db.commit()
         return True

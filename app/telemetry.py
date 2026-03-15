@@ -20,7 +20,7 @@ from opentelemetry.instrumentation.logging import LoggingInstrumentor
 from opentelemetry.instrumentation.sqlalchemy import SQLAlchemyInstrumentor
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExporter
+from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExporter, SpanExporter
 from opentelemetry.sdk.trace.sampling import TraceIdRatioBased
 from fastapi import FastAPI
 
@@ -66,6 +66,7 @@ def _configure_tracing() -> None:
 
     # OTLP exporter if configured, otherwise console exporter as fallback.
     endpoint = settings.OTEL_EXPORTER_OTLP_ENDPOINT
+    exporter: SpanExporter
     if endpoint:
         exporter = OTLPSpanExporter(endpoint=endpoint)
     else:

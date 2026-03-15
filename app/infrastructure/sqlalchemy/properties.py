@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.domains.properties.ports import PropertyRepository, PropertyRecord
-from app.repositories.property import property_crud
+from app.models.property import Property
 from app.schemas.property import PropertyCreate, PropertyUpdate
 
 
@@ -14,23 +15,36 @@ class SqlAlchemyPropertyRepository(PropertyRepository):
         self._db = db
 
     def list(self, *, skip: int, limit: int) -> list[PropertyRecord]:
-        return property_crud.get_multi(self._db, skip=skip, limit=limit)
+        stmt = select(Property).offset(skip).limit(limit)
+        return list(self._db.scalars(stmt).all())
 
     def get(self, property_id: int) -> PropertyRecord | None:
-        return property_crud.get(self._db, property_id)
+        return self._db.get(Property, property_id)
 
     def create(self, *, payload: PropertyCreate) -> PropertyRecord:
-        return property_crud.create(self._db, obj_in=payload)
+        data = payload.model_dump()
+        db_obj = Property(**data)
+        self._db.add(db_obj)
+        self._db.commit()
+        self._db.refresh(db_obj)
+        return db_obj
 
     def update(self, property_id: int, *, payload: PropertyUpdate) -> PropertyRecord | None:
-        db_prop = property_crud.get(self._db, property_id)
+        db_prop = self._db.get(Property, property_id)
         if not db_prop:
             return None
-        return property_crud.update(self._db, db_obj=db_prop, obj_in=payload)
+
+        for field, value in payload.model_dump(exclude_unset=True).items():
+            setattr(db_prop, field, value)
+
+        self._db.commit()
+        self._db.refresh(db_prop)
+        return db_prop
 
     def delete(self, property_id: int) -> bool:
-        db_prop = property_crud.get(self._db, property_id)
+        db_prop = self._db.get(Property, property_id)
         if not db_prop:
             return False
-        property_crud.remove(self._db, record_id=property_id)
+        self._db.delete(db_prop)
+        self._db.commit()
         return True

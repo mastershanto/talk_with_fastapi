@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Callable
 
 from app.auth_utils import decode_token, TOKEN_TYPE_RESET
 from app.domains.auth.ports import AuthRepository, OtpService, UserRecord
@@ -131,7 +132,13 @@ class AuthService:
         access_token = self._repo.generate_login_token(user)
         return LoginData(access_token=access_token, token_type="bearer", user=UserResponse.model_validate(user))
 
-    def change_password(self, user_id: int, payload: ChangePasswordRequest, *, verify_fn) -> UserRecord:
+    def change_password(
+        self,
+        user_id: int,
+        payload: ChangePasswordRequest,
+        *,
+        verify_fn: Callable[[str, str], bool],
+    ) -> UserRecord:
         user = self._repo.get_user_by_id(user_id)
         if not user:
             raise NotFoundException("User not found")

@@ -44,3 +44,7 @@ ignore_missing_imports = true
 [[tool.mypy.overrides]]
 module = ["tests.*"]
 disallow_untyped_defs = false
+
+[[tool.mypy.overrides]]
+module = ["app.domains.*", "app.infrastructure.sqlalchemy.*", "app.main", "app.dependencies"]
+disallow_untyped_defs = true

@@ -45,4 +45,4 @@ jobs:
           SECRET_KEY: ci-secret
           DEBUG: "false"
         run: |
-          pytest
+          pytest --cov=app --cov-config=.coveragerc --cov-report=term-missing --cov-fail-under=72
