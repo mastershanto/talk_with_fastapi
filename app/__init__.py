@@ -1,28 +1,29 @@
-"""
-FastAPI reference project — app package.
+"""FastAPI reference project — app package.
 
-Architecture overview
----------------------
+This package is organized as a **feature-first modular monolith**.
+
+Core structure
+--------------
 app/
   config.py          Settings (pydantic-settings, env / .env override)
   database.py        Engine, SessionLocal, Base
-  dependencies.py    get_db, DBSession alias, PaginationParams
-  exceptions.py      Custom exceptions + global exception handlers
-  main.py            Application factory + lifespan
-  models/
-    base.py          TimestampMixin
-    user.py          User ORM model
-    item.py          Item ORM model
-  schemas/
-    common.py        MessageResponse, PaginatedResponse
-    user.py          UserCreate / UserUpdate / UserResponse ...
-    item.py          ItemCreate / ItemUpdate / ItemResponse
-  crud/
-    base.py          Generic CRUDBase[ModelT, CreateSchemaT, UpdateSchemaT]
-    user.py          CRUDUser + user_crud singleton
-    item.py          CRUDItem + item_crud singleton
-  routers/
-    users.py         GET / POST / PUT / DELETE /api/v1/users
-    items.py         GET / POST / PUT / DELETE /api/v1/items
+  dependencies.py    DI providers (db, services, repos)
+  exceptions.py      Custom exceptions + exception handlers
+  main.py            Application factory (create_app) + lifespan
+  version.py         API versioning constants
+  telemetry.py       Structured logging + OpenTelemetry tracing
+  secrets.py         Optional external secret loader (Vault)
+
+  models/            SQLAlchemy ORM models
+  domains/           Feature modules (ports, use cases, routers, schemas)
+  infrastructure/    Adapters (SQLAlchemy implementations of ports)
+  routers/           Router shims (stable imports for main.py)
+  schemas/           Shared Pydantic schemas
+
+Legacy compatibility
+--------------------
+`app/repositories/` exists for historical reasons (CRUD-style services) but
+new feature work should prefer `app/domains/*` + ports/use-cases.
 """
+
 __version__ = "2.0.0"

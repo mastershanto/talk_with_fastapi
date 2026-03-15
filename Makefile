@@ -1,4 +1,4 @@
-.PHONY: help install-dev format lint typecheck test ci db-upgrade db-revision
+.PHONY: help install-dev format lint typecheck arch-guard test ci db-upgrade db-revision
 
 help:
 	@echo "Targets:"
@@ -6,6 +6,7 @@ help:
 	@echo "  format       Format (ruff)"
 	@echo "  lint         Lint (ruff)"
 	@echo "  typecheck    Type check (mypy)"
+	@echo "  arch-guard   Enforce domain-first architecture guard"
 	@echo "  test         Run tests (pytest)"
 	@echo "  ci           Run lint + typecheck + tests"
 	@echo "  db-upgrade   Run Alembic migrations (upgrade head)"
@@ -24,10 +25,13 @@ lint:
 typecheck:
 	python -m mypy app
 
+arch-guard:
+	python scripts/check_architecture.py
+
 test:
 	pytest
 
-ci: lint typecheck test
+ci: lint typecheck arch-guard test
 
 db-upgrade:
 	python -m alembic upgrade head

@@ -70,10 +70,11 @@ app/
 ├── dependencies.py        # Dependency injection
 ├── exceptions.py          # Error handling
 ├── main.py                # Application factory
+├── domains/               # Feature modules (auth/users/properties/favorites)
+├── infrastructure/        # Adapter implementations (SQLAlchemy)
 ├── models/                # Database models
-├── schemas/               # Validation schemas  
-├── repositories/          # Repository pattern (data access)
-└── routers/               # API endpoints
+├── schemas/               # Shared validation schemas
+└── routers/               # Compatibility shims
 ```
 
 ## 🎯 Naming Conventions
@@ -129,9 +130,9 @@ DATABASE_TIMEOUT = 30
 
 ### Phase 2: Intermediate (1 hour)
 
-1. Study `app/crud/base.py` - Generic CRUD pattern
-2. Study `app/crud/property.py` - Specific implementation
-3. Study `app/routers/properties.py` - API endpoints
+1. Study `app/domains/properties/ports.py` - Use-case boundary
+2. Study `app/infrastructure/sqlalchemy/properties.py` - DB adapter
+3. Study `app/domains/properties/router.py` - HTTP adapter
 
 ### Phase 3: Advanced (1.5 hours)
 
@@ -192,9 +193,9 @@ SQLAlchemy ORM models define the database schema
 
 Pydantic models for request validation and response serialization
 
-### 3. **CRUD Operations** (app/crud/)
+### 3. **Domain Use Cases** (app/domains/*)
 
-Generic CRUD base class with specific implementations
+Domain services + use-cases with explicit ports and adapters
 
 ### 4. **Routers** (app/routers/)
 

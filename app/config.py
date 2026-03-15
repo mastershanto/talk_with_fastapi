@@ -6,6 +6,7 @@ Use `from app.config import settings` anywhere in the project.
 """
 from functools import lru_cache
 
+from pydantic import model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -66,6 +67,24 @@ class Settings(BaseSettings):
         case_sensitive=True,
         extra="ignore",
     )
+
+    @model_validator(mode="after")
+    def validate_production_safety(self) -> "Settings":
+        """Enforce safer defaults when running in production-like environments."""
+
+        env = self.ENVIRONMENT.strip().lower()
+        if env in {"prod", "production"}:
+            if self.SECRET_KEY == "your-secret-key-change-in-production" or len(self.SECRET_KEY) < 32:
+                raise ValueError("In production, SECRET_KEY must be set and at least 32 chars")
+            if self.ALLOWED_ORIGINS == ["*"]:
+                raise ValueError("In production, ALLOWED_ORIGINS cannot be ['*']")
+            if self.DB_AUTO_CREATE_TABLES:
+                raise ValueError("In production, DB_AUTO_CREATE_TABLES must be false")
+
+        if not 0.0 <= self.OTEL_SAMPLE_RATE <= 1.0:
+            raise ValueError("OTEL_SAMPLE_RATE must be between 0.0 and 1.0")
+
+        return self
 
 
 @lru_cache(maxsize=1)

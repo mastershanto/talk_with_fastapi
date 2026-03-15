@@ -15,7 +15,10 @@ fi
 PORT=8000
 if command -v lsof >/dev/null 2>&1; then
   if lsof -ti tcp:${PORT} >/dev/null 2>&1; then
-    lsof -ti tcp:${PORT} | xargs -r kill -9 && echo "Killed processes listening on port ${PORT}."
+    for pid in $(lsof -ti tcp:${PORT}); do
+      kill -9 "$pid"
+    done
+    echo "Killed processes listening on port ${PORT}."
   else
     echo "No process listening on port ${PORT}."
   fi

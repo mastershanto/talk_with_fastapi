@@ -26,14 +26,13 @@ from app.config import settings
 from app.database import Base, engine, SessionLocal
 from app.exceptions import register_exception_handlers
 from app.routers import users, properties, auth, favorites
+from app.telemetry import init_telemetry
 from sqladmin import Admin, ModelView
 from app.models.user import User
 from app.models.property import Property
 
 
 # ── Logging / Observability ─────────────────────────────────────────────────
-
-from app.telemetry import init_telemetry
 
 logger = logging.getLogger(__name__)
 

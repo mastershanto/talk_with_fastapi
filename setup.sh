@@ -1,69 +1,46 @@
 #!/bin/bash
 
-# Quick Start Script for FastAPI ML Project
-# This script will set up and run the application
+# One-time local setup script for this repository.
 
-set -e  # Exit on error
+set -e
 
 echo "=========================================="
-echo "FastAPI ML CRUD Application Setup"
+echo "Talk With FastAPI - Local Setup"
 echo "=========================================="
 echo ""
 
-# Check if Python is installed
-if ! command -v python3 &> /dev/null; then
-    echo "❌ Python 3 is not installed. Please install Python 3.8 or higher."
+if ! command -v python3 >/dev/null 2>&1; then
+    echo "❌ Python 3 is not installed."
     exit 1
 fi
 
-echo "✓ Python 3 is installed"
-
-# Check if virtual environment exists
-if [ ! -d "venv" ]; then
-    echo "📦 Creating virtual environment..."
-    python3 -m venv venv
-    echo "✓ Virtual environment created"
+if [ ! -d ".venv" ]; then
+    echo "📦 Creating .venv ..."
+    python3 -m venv .venv
 else
-    echo "✓ Virtual environment already exists"
+    echo "✓ .venv already exists"
 fi
 
-# Activate virtual environment
 echo "🔄 Activating virtual environment..."
-source venv/bin/activate
+source .venv/bin/activate
 
-# Install dependencies
 echo "📥 Installing dependencies..."
-pip install -q --upgrade pip
-pip install -q -r requirements.txt
-echo "✓ Dependencies installed"
+python -m pip install -U pip
+python -m pip install -r requirements-dev.txt
 
-# Train ML model if it doesn't exist
-if [ ! -f "model/iris_model.joblib" ]; then
-    echo "🤖 Training ML model..."
-    python -m model.train_model
-    echo "✓ Model trained and saved"
-else
-    echo "✓ ML model already exists"
-fi
+echo "🪝 Installing pre-commit hooks..."
+pre-commit install
 
-# Check if database exists
-if [ ! -f "test.db" ]; then
-    echo "🗄️  Database will be created on first run"
-fi
+echo "✅ Running local quality checks..."
+make ci
 
 echo ""
 echo "=========================================="
 echo "✅ Setup Complete!"
 echo "=========================================="
 echo ""
-echo "To start the application, run:"
-echo "  source venv/bin/activate"
-echo "  python -m uvicorn src.main:app --reload"
+echo "Start server:"
+echo "  ./run.sh"
 echo ""
-echo "Then visit:"
-echo "  • API Docs: http://localhost:8000/docs"
-echo "  • Application: http://localhost:8000"
-echo ""
-echo "To run tests:"
-echo "  pytest tests/ -v"
-echo ""
+echo "Docs:"
+echo "  http://localhost:8000/docs"

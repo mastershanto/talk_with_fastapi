@@ -13,3 +13,11 @@ repos:
       - id: ruff
         args: [--fix]
       - id: ruff-format
+
+  - repo: local
+    hooks:
+      - id: architecture-guard
+        name: architecture-guard
+        entry: python scripts/check_architecture.py
+        language: system
+        pass_filenames: false

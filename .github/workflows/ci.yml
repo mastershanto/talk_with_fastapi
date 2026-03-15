@@ -30,6 +30,14 @@ jobs:
         run: |
           ruff check .
 
+      - name: Typecheck (mypy)
+        run: |
+          mypy app
+
+      - name: Architecture guard
+        run: |
+          python scripts/check_architecture.py
+
       - name: Tests (pytest)
         env:
           # Keep CI hermetic — tests already default to SQLite via tests/conftest.py
