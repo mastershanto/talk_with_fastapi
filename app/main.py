@@ -25,7 +25,7 @@ from sqlalchemy import text
 from app.config import settings
 from app.database import Base, engine, SessionLocal
 from app.exceptions import register_exception_handlers
-from app.routers import users, properties, auth
+from app.routers import users, properties, auth, favorites
 from sqladmin import Admin, ModelView
 from app.models.user import User
 from app.models.property import Property
@@ -151,6 +151,7 @@ def create_app() -> FastAPI:
     application.include_router(auth.router, prefix=API_PREFIX)
     application.include_router(users.router, prefix=API_PREFIX)
     application.include_router(properties.router, prefix=API_PREFIX)
+    application.include_router(favorites.router, prefix=API_PREFIX)
 
     # ── Admin Panel ────────────────────────────────────────────────────────────
     admin = Admin(application, engine)

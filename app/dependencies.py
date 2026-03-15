@@ -26,6 +26,9 @@ from app.domains.auth.ports import AuthRepository, OtpService
 from app.domains.auth.service import AuthService
 from app.infrastructure.sqlalchemy.auth import SqlAlchemyAuthRepository
 from app.infrastructure.sqlalchemy.otp import SqlAlchemyOtpService
+from app.domains.favorites.ports import FavoritesRepository
+from app.domains.favorites.use_cases import FavoritesUseCases
+from app.infrastructure.sqlalchemy.favorites import SqlAlchemyFavoritesRepository
 
 
 # ── Database session ──────────────────────────────────────────────────────────
@@ -118,3 +121,17 @@ def get_auth_service(
 
 
 AuthServiceDep = Annotated[AuthService, Depends(get_auth_service)]
+
+
+def get_favorites_repository(db: Session = Depends(get_db)) -> FavoritesRepository:
+    return SqlAlchemyFavoritesRepository(db)
+
+
+def get_favorites_use_cases(
+    favorites: FavoritesRepository = Depends(get_favorites_repository),
+    properties: PropertyRepository = Depends(get_property_repository),
+) -> FavoritesUseCases:
+    return FavoritesUseCases(favorites=favorites, properties=properties)
+
+
+FavoritesUseCasesDep = Annotated[FavoritesUseCases, Depends(get_favorites_use_cases)]
