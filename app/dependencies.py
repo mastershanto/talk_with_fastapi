@@ -16,6 +16,13 @@ from sqlalchemy.orm import Session
 from app.config import settings
 from app.database import SessionLocal
 
+from app.domains.users.ports import UserRepository
+from app.domains.users.service import UserService
+from app.domains.properties.ports import PropertyRepository
+from app.domains.properties.service import PropertyService
+from app.infrastructure.sqlalchemy.users import SqlAlchemyUserRepository
+from app.infrastructure.sqlalchemy.properties import SqlAlchemyPropertyRepository
+
 
 # ── Database session ──────────────────────────────────────────────────────────
 
@@ -64,3 +71,28 @@ class PaginationParams:
 
 # Annotated alias — use `Pagination` as the type hint in route parameters.
 Pagination = Annotated[PaginationParams, Depends(PaginationParams)]
+
+
+# ── Domain adapters (ports → concrete implementations) ──────────────────────
+
+def get_user_repository(db: Session = Depends(get_db)) -> UserRepository:
+    return SqlAlchemyUserRepository(db)
+
+
+def get_property_repository(db: Session = Depends(get_db)) -> PropertyRepository:
+    return SqlAlchemyPropertyRepository(db)
+
+
+def get_user_service(repo: UserRepository = Depends(get_user_repository)) -> UserService:
+    return UserService(repo)
+
+
+def get_property_service(
+    properties: PropertyRepository = Depends(get_property_repository),
+    users: UserRepository = Depends(get_user_repository),
+) -> PropertyService:
+    return PropertyService(properties=properties, users=users)
+
+
+UserServiceDep = Annotated[UserService, Depends(get_user_service)]
+PropertyServiceDep = Annotated[PropertyService, Depends(get_property_service)]

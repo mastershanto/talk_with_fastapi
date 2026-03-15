@@ -7,6 +7,13 @@ Welcome! This project is a textbook-style implementation of an enterprise-grade 
 1. [Project Structure](#project-structure)
 2. [Core Concepts](#core-concepts)
 3. [Data Flow](#data-flow)
+├── domains/                  # 🧠 Domain modules (ports + use-cases)
+│   ├── users/                # Users domain service + repository port
+│   └── properties/           # Properties domain service + repository port
+│
+├── infrastructure/           # 🔩 Concrete adapters (DB, external services)
+│   └── sqlalchemy/           # SQLAlchemy repository implementations
+│
 4. [File Descriptions](#file-descriptions)
 5. [Learning Path](#learning-path)
 
@@ -97,15 +104,17 @@ user_crud = CRUDUser(User)
 
 ### 4. Routers (app/routers/)
 **What:** FastAPI APIRouter instances that map HTTP requests to handlers  
-**Why:** Organize endpoints by domain, use dependency injection for services
+**Why:** Organize endpoints by domain, keep handlers thin, and inject services
 
 ```python
 # Example: routers/properties.py
-@router.post("/", response_model=PropertyResponse, status_code=201)
-def create_property(payload: PropertyCreate, db: DBSession) -> PropertyResponse:
+@router.post("/", status_code=201)
+def create_property(payload: PropertyCreate, service: PropertyServiceDep) -> dict:
     """Create a new property listing."""
-    prop = property_crud.create(db, obj_in=payload)
-    return PropertyResponse.model_validate(prop)
+    prop = service.create_property(payload)
+    if not prop:
+        raise NotFoundException(f"Owner (User {payload.owner_id}) not found.")
+    return success_response(PropertyResponse.model_validate(prop), code=201)
 ```
 
 ### 5. Dependencies (app/dependencies.py)
@@ -154,11 +163,11 @@ HTTP Request (POST /api/v1/properties/)
    - Pydantic validates JSON body → PropertyCreate
     ↓
 4. Handler Function
-   - property_crud.create(db, obj_in=payload)
+    - PropertyService.create_property(payload)
     ↓
-5. CRUD Operation
-   - CRUDBase.create() instantiates Property model
-   - Adds to session and commits
+5. Use-case + Adapter
+    - Service calls a repository port
+    - Infrastructure adapter persists via SQLAlchemy CRUD
     ↓
 6. Response Serialization
    - PropertyResponse.model_validate(db_property)
