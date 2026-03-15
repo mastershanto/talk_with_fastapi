@@ -105,6 +105,13 @@ Success responses follow:
 
 Helpers live in `app/response_formatter.py`.
 
+## Observability / Tracing
+
+This project includes structured JSON logging and optional OpenTelemetry tracing.
+
+- Logs are emitted as JSON and include trace/span IDs when OTEL is enabled.
+- By default tracing is disabled; enable it with `OTEL_ENABLED=true` and configure `OTEL_EXPORTER_OTLP_ENDPOINT`.
+
 ## Migrations (Alembic)
 
 This project supports **migration-driven schema changes** via Alembic.

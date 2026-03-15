@@ -248,6 +248,28 @@ make ci
 make db-upgrade
 ```
 
+### Release (Docker image)
+
+Tag a release and push:
+
+```bash
+git tag v1.0.0
+git push --tags
+```
+
+This repository has a GitHub Actions release workflow that builds and publishes a Docker image to GitHub Container Registry when a `v*.*.*` tag is pushed.
+
+### Observability + Tracing (OpenTelemetry)
+
+By default this project logs structured JSON.
+
+Enable OpenTelemetry tracing by setting:
+
+```bash
+OTEL_ENABLED=true
+OTEL_EXPORTER_OTLP_ENDPOINT=https://<otel-collector>:4318/v1/traces
+```
+
 ### Migrations (Alembic)
 
 ```bash

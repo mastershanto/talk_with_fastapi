@@ -2,7 +2,7 @@
 FROM python:3.12.0-slim
 
 # Prevents Python from buffering stdout/stderr (useful for container logs)
-ENV PYTHONUNBUFFERED=1 
+ENV PYTHONUNBUFFERED=1
 
 # System dependencies needed to build some Python packages (psycopg2, numpy, scikit-learn)
 RUN apt-get update \

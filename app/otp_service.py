@@ -34,7 +34,20 @@ MAX_VERIFY_ATTEMPTS = 5
 
 
 def _utcnow() -> datetime:
+    """Return the current UTC time (tz-aware)."""
+
     return datetime.now(timezone.utc)
+
+
+def _ensure_utc(dt: datetime) -> datetime:
+    """Ensure a datetime is timezone-aware in UTC.
+
+    SQLite may return naive datetimes even if SQLAlchemy is configured with timezone=True.
+    """
+
+    if dt.tzinfo is None:
+        return dt.replace(tzinfo=timezone.utc)
+    return dt.astimezone(timezone.utc)
 
 
 def _normalize_email(email: str) -> str:
@@ -136,7 +149,9 @@ def verify_otp(db: Session, *, email: str, purpose: str, otp: str) -> bool:
         return False
 
     now = _utcnow()
-    if record.expires_at <= now:
+    expires_at = _ensure_utc(record.expires_at)
+
+    if expires_at <= now:
         record.consumed_at = now
         db.commit()
         return False

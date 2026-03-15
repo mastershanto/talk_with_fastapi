@@ -30,3 +30,12 @@ python-jose[cryptography]>=3.3.0
 passlib[bcrypt]>=1.7.4
 bcrypt>=4.0.0
 python-multipart>=0.0.5
+
+# Observability / Tracing
+python-json-logger>=2.0.7
+opentelemetry-api>=1.24.0
+opentelemetry-sdk>=1.24.0
+opentelemetry-exporter-otlp>=1.24.0
+opentelemetry-instrumentation-fastapi>=0.40.0
+opentelemetry-instrumentation-sqlalchemy>=0.40.0
+opentelemetry-instrumentation-logging>=0.40.0

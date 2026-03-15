@@ -31,13 +31,10 @@ from app.models.user import User
 from app.models.property import Property
 
 
-# ── Logging ───────────────────────────────────────────────────────────────────
+# ── Logging / Observability ─────────────────────────────────────────────────
 
-logging.basicConfig(
-    level=logging.DEBUG if settings.DEBUG else logging.INFO,
-    format="%(asctime)s | %(levelname)-8s | %(name)s — %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-)
+from app.telemetry import init_telemetry
+
 logger = logging.getLogger(__name__)
 
 
@@ -122,12 +119,12 @@ async def lifespan(app: FastAPI):  # noqa: ARG001
 # ── Application factory ───────────────────────────────────────────────────────
 
 def create_app() -> FastAPI:
-    """
-    Construct and configure the FastAPI application.
+    """Construct and configure the FastAPI application.
 
     Separated as a factory so tests can instantiate the app independently,
     e.g. with a different DATABASE_URL pointing to an in-memory SQLite DB.
     """
+
     application = FastAPI(
         title=settings.APP_NAME,
         description=settings.APP_DESCRIPTION,
@@ -136,6 +133,9 @@ def create_app() -> FastAPI:
         redoc_url="/redoc",
         lifespan=lifespan,
     )
+
+    # Initialize structured logging and optional OpenTelemetry tracing.
+    init_telemetry(application)
 
     # ── CORS ──────────────────────────────────────────────────────────────────
     application.add_middleware(
@@ -150,7 +150,8 @@ def create_app() -> FastAPI:
     register_exception_handlers(application)
 
     # ── API routers ────────────────────────────────────────────────────────────
-    API_PREFIX = "/api/v1"
+    from app.version import API_PREFIX
+
     application.include_router(auth.router, prefix=API_PREFIX)
     application.include_router(users.router, prefix=API_PREFIX)
     application.include_router(properties.router, prefix=API_PREFIX)

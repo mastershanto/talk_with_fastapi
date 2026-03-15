@@ -46,6 +46,19 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440  # 24 hours
 
+    # ── Observability / Tracing ──────────────────────────────────────────────
+    OTEL_ENABLED: bool = False
+    OTEL_SERVICE_NAME: str = "talk-with-fastapi"
+    OTEL_EXPORTER_OTLP_ENDPOINT: str | None = None
+    OTEL_SAMPLE_RATE: float = 0.1
+
+    # ── Environment
+    ENVIRONMENT: str = "development"
+
+    # ── Secret store (Vault/KV etc.)
+    VAULT_URL: str | None = None
+    VAULT_TOKEN: str | None = None
+
     # ── pydantic-settings meta ─────────────────────────────────────────────────
     model_config = SettingsConfigDict(
         env_file=".env",
@@ -58,6 +71,15 @@ class Settings(BaseSettings):
 @lru_cache(maxsize=1)
 def get_settings() -> Settings:
     """Return the singleton Settings instance (cached after first call)."""
+    # Load optional secrets from external vault before instantiating settings.
+    try:
+        from app.secrets import load_vault_secrets
+
+        load_vault_secrets()
+    except Exception:
+        # Keep it silent — failure to reach Vault should not block startup.
+        pass
+
     return Settings()
 
 
