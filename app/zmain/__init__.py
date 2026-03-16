@@ -1,16 +1,14 @@
-"""Secondary entrypoint package for the FastAPI application.
+"""Reusable factory components (database, lifespan, registrars).
 
-This package is intended to house the concrete application factory implementation
-while keeping `app.main` minimal and stable for deployment, tooling, and tests.
-
-The package is deliberately named `zmain` to remain low-priority in imports and to
-prevent clashes with the main `app.main` entrypoint.
-
-Usage:
-    from app.zmain import create_app
-    app = create_app()
+All logic is consolidated in app.main. This module provides backward compatibility
+by re-exporting the create_app function.
 """
 
-from .factory import create_app
+
+def create_app():
+    """Backward-compatible factory function."""
+    from app.main import _Factory
+    return _Factory().build()
+
 
 __all__ = ["create_app"]

@@ -1,16 +1,17 @@
 """Feature registrars for wiring routers, admin, and health endpoints."""
 
+import logging
+
 from fastapi import FastAPI
 from sqlalchemy import text
-import logging
+from sqladmin import Admin, ModelView
 
 from app.core.config import settings
 from app.core.database import engine
-from app.routers import users, properties, auth, favorites
-from sqladmin import Admin, ModelView
-from app.persistence.models.user import User
-from app.persistence.models.property import Property
 from app.core.dependencies import get_db
+from app.persistence.models.property import Property
+from app.persistence.models.user import User
+from app.routers import auth, favorites, properties, users
 
 
 logger = logging.getLogger(__name__)

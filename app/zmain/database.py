@@ -5,7 +5,7 @@ import signal
 import threading
 import types
 
-from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.orm import Session, sessionmaker
 
 from app.core.database import Base, engine
 
