@@ -46,5 +46,5 @@ module = ["tests.*"]
 disallow_untyped_defs = false
 
 [[tool.mypy.overrides]]
-module = ["app.domains.*", "app.infrastructure.sqlalchemy.*", "app.main", "app.dependencies"]
+module = ["app.modules.*", "app.persistence.*", "app.main", "app.dependencies"]
 disallow_untyped_defs = true

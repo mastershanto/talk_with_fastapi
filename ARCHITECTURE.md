@@ -13,24 +13,18 @@ Design goals:
 
 ```text
 app/
-  domains/                 # Use-case-centric feature modules
+  core/                    # shared configuration, DI wiring, exceptions, telemetry, security
+  persistence/             # ORM model registry and persistence adapters
+  modules/                 # feature modules (ports, services/use cases, adapters, routers)
     auth/                  # registration/login/OTP/password reset/profile
-    users/                 # users CRUD
+    users/                 # users CRUD + related business rules
     properties/            # properties CRUD
     favorites/             # property favorites
 
-  infrastructure/          # concrete adapters (DB/external services)
-    sqlalchemy/            # SQLAlchemy implementations of ports
+  routers/                 # compatibility shims (re-export module routers)
 
-  models/                  # ORM models (DB schema)
-  schemas/                 # Pydantic request/response schemas
-  routers/                 # compatibility shims (re-export domain routers)
-
-  dependencies.py          # DI wiring (ports -> adapters -> use-cases)
+  scripts/                 # build/test/maintenance helper scripts
   main.py                  # app factory + router registration + lifespan
-  exceptions.py            # consistent error handling
-  response_formatter.py    # response envelope helpers
-  security.py              # JWT auth dependency (CurrentUser)
 ```
 
 ## Clean Architecture layers (in this repo)

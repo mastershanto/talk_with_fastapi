@@ -14,16 +14,14 @@ app/
   telemetry.py       Structured logging + OpenTelemetry tracing
   secrets.py         Optional external secret loader (Vault)
 
-  models/            SQLAlchemy ORM models
-  domains/           Feature modules (ports, use cases, routers, schemas)
-  infrastructure/    Adapters (SQLAlchemy implementations of ports)
+  persistence/       ORM models + persistence adapters (SQLAlchemy)
+  modules/           Feature modules (ports, services/use cases, routers, schemas)
   routers/           Router shims (stable imports for main.py)
-  schemas/           Shared Pydantic schemas
 
 Legacy compatibility
 --------------------
 `app/repositories/` exists for historical reasons (CRUD-style services) but
-new feature work should prefer `app/domains/*` + ports/use-cases.
+new feature work should prefer `app/modules/*` + ports/use-cases.
 """
 
 __version__ = "2.0.0"
