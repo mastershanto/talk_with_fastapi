@@ -6,8 +6,8 @@ behind a port.
 
 from __future__ import annotations
 
-from app.domains.users.ports import UserRepository, UserRecord
-from app.schemas.user import UserCreate, UserUpdate
+from app.modules.users.ports.ports import UserRepository, UserRecord
+from app.modules.users.schemas.user import UserCreate, UserUpdate
 
 
 class UserService:

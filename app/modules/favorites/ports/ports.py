@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from typing import Any, Protocol, Sequence
 
-from app.domains.favorites.entities import Favorite
+from app.modules.favorites.domain.entities import Favorite
 
 
 PropertyRecord = Any  # gradually tighten to a domain entity later

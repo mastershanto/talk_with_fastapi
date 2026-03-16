@@ -5,7 +5,7 @@ from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from app.models.property import PropertyType, PropertyStatus
+from app.persistence.models.property import PropertyType, PropertyStatus
 
 
 class PropertyBase(BaseModel):

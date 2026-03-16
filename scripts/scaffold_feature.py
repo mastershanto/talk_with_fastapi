@@ -144,9 +144,9 @@ def main() -> None:
         (
             '"""Compatibility shim.\n\n'
             "The project is moving to a feature-first modular monolith. The real router now\n"
-            f"lives at `app.domains.{feature}.router`.\n"
+            f"lives at `app.modules.{feature}.api.router`.\n"
             '"""\n\n'
-            f"from app.domains.{feature}.router import router\n\n"
+            f"from app.modules.{feature}.api.router import router\n\n"
             "__all__ = ['router']\n"
         ),
     )

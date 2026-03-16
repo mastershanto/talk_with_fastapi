@@ -4,10 +4,10 @@ import argparse
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from app.config import settings
-from app.models.user import User
-from app.models.property import Property, PropertyType, PropertyStatus
-from app.auth_utils import hash_password
+from app.core.config import settings
+from app.persistence.models.user import User
+from app.persistence.models.property import Property, PropertyType, PropertyStatus
+from app.core.auth_utils import hash_password
 
 # Database setup
 engine = create_engine(str(settings.DATABASE_URL))

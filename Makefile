@@ -29,7 +29,7 @@ arch-guard:
 	python scripts/check_architecture.py
 
 test:
-	pytest
+	python -m pytest
 
 ci: lint typecheck arch-guard test
 

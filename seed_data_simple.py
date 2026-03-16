@@ -4,9 +4,9 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import bcrypt
 
-from app.config import settings
-from app.models.user import User
-from app.models.property import Property, PropertyType, PropertyStatus
+from app.core.config import settings
+from app.persistence.models.user import User
+from app.persistence.models.property import Property, PropertyType, PropertyStatus
 
 engine = create_engine(str(settings.DATABASE_URL))
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -70,16 +70,16 @@ def _make_email(first: str, last: str) -> str:
 def seed_database():
     """Populate database with sample data."""
     session = SessionLocal()
-    
+
     try:
         # Check if data already exists
         user_count = session.query(User).count()
         if user_count > 0:
             print(f"⚠️  Database already contains {user_count} users. Skipping.")
             return
-        
+
         print("🌱 Starting database seeding...")
-        
+
         # Generate and add users
         print("📝 Creating 100 users...")
         users = []
@@ -100,14 +100,14 @@ def seed_database():
                     age=float(age),
                 )
             )
-        
+
         session.add_all(users)
         session.commit()
         print(f"✅ Created {len(users)} users")
-        
+
         # Get user IDs for property assignment
         user_ids = [user.id for user in session.query(User).all()]
-        
+
         # Generate and add properties
         print("🏠 Creating 100+ properties...")
         properties = []
@@ -120,7 +120,7 @@ def seed_database():
             status = random.choice(list(PropertyStatus))
             area_sqft = round(random.uniform(800, 10000), 0)
             owner_id = random.choice(user_ids)
-            
+
             properties.append(Property(
                 title=title,
                 description=description,
@@ -131,17 +131,17 @@ def seed_database():
                 area_sqft=area_sqft,
                 owner_id=owner_id
             ))
-        
+
         session.add_all(properties)
         session.commit()
-        
+
         property_count = session.query(Property).count()
         print(f"✅ Created {property_count} properties")
-        
+
         print("🎉 Seeding completed successfully!")
         print(f"   - Users: {len(user_ids)}")
         print(f"   - Properties: {property_count}")
-        
+
     except Exception as e:
         session.rollback()
         print(f"❌ Error during seeding: {e}")

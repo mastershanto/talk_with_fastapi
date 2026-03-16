@@ -8,8 +8,8 @@ from __future__ import annotations
 from sqlalchemy import ForeignKey, Integer, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
-from app.database import Base
-from app.models.base import TimestampMixin
+from app.core.database import Base
+from app.persistence.models.base import TimestampMixin
 
 
 class PropertyFavorite(TimestampMixin, Base):

@@ -8,10 +8,10 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.domains.favorites.entities import Favorite
-from app.domains.favorites.ports import FavoritesRepository
-from app.models.favorite import PropertyFavorite
-from app.models.property import Property
+from app.modules.favorites.domain.entities import Favorite
+from app.modules.favorites.ports.ports import FavoritesRepository
+from app.persistence.models.favorite import PropertyFavorite
+from app.persistence.models.property import Property
 
 
 class SqlAlchemyFavoritesRepository(FavoritesRepository):

@@ -5,10 +5,10 @@ from __future__ import annotations
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.auth_utils import hash_password
-from app.domains.users.ports import UserRepository, UserRecord
-from app.models.user import User
-from app.schemas.user import UserCreate, UserUpdate
+from app.core.auth_utils import hash_password
+from app.modules.users.ports.ports import UserRepository, UserRecord
+from app.persistence.models.user import User
+from app.modules.users.schemas.user import UserCreate, UserUpdate
 
 
 class SqlAlchemyUserRepository(UserRepository):

@@ -17,7 +17,7 @@ from typing import Any, Final
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 
-from app.config import settings
+from app.core.config import settings
 
 # ── Password hashing ──────────────────────────────────────────────────────────
 
@@ -89,10 +89,10 @@ def create_reset_token(claims: dict[str, Any]) -> str:
 def decode_token(token: str) -> dict[str, Any] | None:
     """
     Decode a JWT access token.
-    
+
     Args:
         token: JWT token string
-        
+
     Returns:
         Dictionary of claims if valid, None if invalid
     """

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from app.config import Settings
+from app.core.config import Settings
 
 
 def test_settings_rejects_unsafe_production_defaults() -> None:

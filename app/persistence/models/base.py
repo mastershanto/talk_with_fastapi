@@ -2,7 +2,7 @@
 Shared model mixins.
 
 Usage:
-    from app.models.base import TimestampMixin
+    from app.persistence.models.base import TimestampMixin
 
     class MyModel(TimestampMixin, Base):
         ...

@@ -24,8 +24,8 @@ from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExport
 from opentelemetry.sdk.trace.sampling import TraceIdRatioBased
 from fastapi import FastAPI
 
-from app.config import settings
-from app.database import engine
+from app.core.config import settings
+from app.core.database import engine
 
 
 def _configure_logging() -> None:

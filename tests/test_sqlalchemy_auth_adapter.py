@@ -5,8 +5,8 @@ from sqlalchemy.engine import Engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
-from app.infrastructure.sqlalchemy.auth import SqlAlchemyAuthRepository
-from app.models.user import User
+from app.modules.auth.infrastructure.sqlalchemy.auth import SqlAlchemyAuthRepository
+from app.persistence.models.user import User
 
 
 def _build_sessionmaker() -> tuple[sessionmaker, Engine]:

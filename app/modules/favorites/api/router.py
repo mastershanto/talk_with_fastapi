@@ -4,11 +4,11 @@ from __future__ import annotations
 
 from fastapi import APIRouter
 
-from app.dependencies import FavoritesUseCasesDep, Pagination
-from app.response_formatter import success_response
-from app.security import CurrentUser
-from app.domains.favorites.schemas import FavoritePropertyResponse
-from app.schemas.property import PropertyResponse
+from app.core.dependencies import FavoritesUseCasesDep, Pagination
+from app.core.response_formatter import success_response
+from app.core.security import CurrentUser
+from app.modules.favorites.schemas.schemas import FavoritePropertyResponse
+from app.modules.properties.schemas.property import PropertyResponse
 
 
 router = APIRouter(prefix="/favorites", tags=["Favorites"])

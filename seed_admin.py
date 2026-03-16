@@ -7,10 +7,10 @@ from datetime import datetime
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from app.config import settings
-from app.database import Base
-from app.models.user import User
-from app.auth_utils import hash_password
+from app.core.config import settings
+from app.core.database import Base
+from app.persistence.models.user import User
+from app.core.auth_utils import hash_password
 
 # Database setup
 engine = create_engine(str(settings.DATABASE_URL))

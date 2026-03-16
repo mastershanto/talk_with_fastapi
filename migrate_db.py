@@ -5,8 +5,8 @@ This will drop and recreate all tables - use with caution!
 import os
 from dotenv import load_dotenv
 from sqlalchemy import create_engine, text
-from app.database import Base
-from app import models  # noqa: F401
+from app.core.database import Base
+from app.persistence import models  # noqa: F401
 
 # Load environment variables
 load_dotenv()

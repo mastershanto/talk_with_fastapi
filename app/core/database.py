@@ -14,7 +14,7 @@ from sqlalchemy import Engine, create_engine
 from sqlalchemy.orm import sessionmaker, DeclarativeBase
 from sqlalchemy.pool import NullPool
 
-from app.config import settings
+from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 

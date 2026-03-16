@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any, Protocol, Sequence
 
-from app.schemas.property import PropertyCreate, PropertyUpdate
+from app.modules.properties.schemas.property import PropertyCreate, PropertyUpdate
 
 
 PropertyRecord = Any  # gradually tighten to a domain entity later

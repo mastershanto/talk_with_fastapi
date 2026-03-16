@@ -2,10 +2,10 @@
 
 from fastapi import APIRouter, status
 
-from app.dependencies import Pagination, PropertyServiceDep
-from app.exceptions import NotFoundException
-from app.response_formatter import list_response, success_response
-from app.schemas.property import PropertyCreate, PropertyResponse, PropertyUpdate
+from app.core.dependencies import Pagination, PropertyServiceDep
+from app.core.exceptions import NotFoundException
+from app.core.response_formatter import list_response, success_response
+from app.modules.properties.schemas.property import PropertyCreate, PropertyResponse, PropertyUpdate
 
 router = APIRouter(prefix="/properties", tags=["Properties"])
 

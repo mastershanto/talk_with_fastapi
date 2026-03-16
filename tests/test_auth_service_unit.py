@@ -5,9 +5,9 @@ from datetime import datetime, timezone
 
 import pytest
 
-from app.domains.auth.service import AuthService
-from app.exceptions import ConflictException, UnauthorizedException
-from app.schemas.auth import ChangePasswordRequest, RegisterRequest, VerifyOtpRequest
+from app.modules.auth.application.service import AuthService
+from app.core.exceptions import ConflictException, UnauthorizedException
+from app.modules.auth.schemas.auth import ChangePasswordRequest, RegisterRequest, VerifyOtpRequest
 
 
 @dataclass

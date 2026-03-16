@@ -10,7 +10,7 @@ from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
-from app.schemas.property import PropertyResponse
+from app.modules.properties.schemas.property import PropertyResponse
 
 
 class UserBase(BaseModel):

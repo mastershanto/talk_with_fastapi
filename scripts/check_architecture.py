@@ -1,8 +1,8 @@
 """Architecture guard checks.
 
 Fail CI/pre-commit if new Python modules are added under app/repositories.
-The domain-first architecture uses app/domains + app/infrastructure as the
-primary extension points; app/repositories is legacy compatibility.
+The domain-first architecture uses app/modules/* as the primary extension
+points; app/repositories is legacy compatibility.
 """
 
 from __future__ import annotations
@@ -41,7 +41,7 @@ def main() -> int:
     if violations:
         print("Architecture guard failed.")
         print("New modules under app/repositories are not allowed.")
-        print("Use app/domains/<feature>/ + app/infrastructure/sqlalchemy instead.")
+        print("Use app/modules/<feature>/ instead.")
         for item in violations:
             print(f" - {item}")
         return 1
@@ -61,7 +61,7 @@ def main() -> int:
     if importer_violations:
         print("Architecture guard failed.")
         print("Importing app.repositories is deprecated outside compatibility files.")
-        print("Use app/domains/* ports and app/infrastructure/sqlalchemy adapters instead.")
+        print("Use app/modules/* ports and app/modules/*/infrastructure adapters instead.")
         for item in importer_violations:
             print(f" - {item}")
         return 1

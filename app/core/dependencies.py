@@ -13,22 +13,22 @@ from typing import Annotated, Generator
 from fastapi import Depends, Query
 from sqlalchemy.orm import Session
 
-from app.config import settings
-from app.database import SessionLocal
+from app.core.config import settings
+from app.core.database import SessionLocal
 
-from app.domains.users.ports import UserRepository
-from app.domains.users.service import UserService
-from app.domains.properties.ports import PropertyRepository
-from app.domains.properties.service import PropertyService
-from app.infrastructure.sqlalchemy.users import SqlAlchemyUserRepository
-from app.infrastructure.sqlalchemy.properties import SqlAlchemyPropertyRepository
-from app.domains.auth.ports import AuthRepository, OtpService
-from app.domains.auth.service import AuthService
-from app.infrastructure.sqlalchemy.auth import SqlAlchemyAuthRepository
-from app.infrastructure.sqlalchemy.otp import SqlAlchemyOtpService
-from app.domains.favorites.ports import FavoritesRepository
-from app.domains.favorites.use_cases import FavoritesUseCases
-from app.infrastructure.sqlalchemy.favorites import SqlAlchemyFavoritesRepository
+from app.modules.users.ports.ports import UserRepository
+from app.modules.users.application.service import UserService
+from app.modules.properties.ports.ports import PropertyRepository
+from app.modules.properties.application.service import PropertyService
+from app.modules.users.infrastructure.sqlalchemy.users import SqlAlchemyUserRepository
+from app.modules.properties.infrastructure.sqlalchemy.properties import SqlAlchemyPropertyRepository
+from app.modules.auth.ports.ports import AuthRepository, OtpService
+from app.modules.auth.application.service import AuthService
+from app.modules.auth.infrastructure.sqlalchemy.auth import SqlAlchemyAuthRepository
+from app.modules.auth.infrastructure.sqlalchemy.otp import SqlAlchemyOtpService
+from app.modules.favorites.ports.ports import FavoritesRepository
+from app.modules.favorites.application.use_cases import FavoritesUseCases
+from app.modules.favorites.infrastructure.sqlalchemy.favorites import SqlAlchemyFavoritesRepository
 
 
 # ── Database session ──────────────────────────────────────────────────────────

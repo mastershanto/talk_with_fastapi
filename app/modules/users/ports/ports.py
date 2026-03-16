@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from typing import Any, Protocol, Sequence
 
-from app.schemas.user import UserCreate, UserUpdate
+from app.modules.users.schemas.user import UserCreate, UserUpdate
 
 
 UserRecord = Any  # gradually tighten to a domain entity later

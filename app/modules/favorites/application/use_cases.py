@@ -4,10 +4,10 @@ from __future__ import annotations
 
 from typing import Sequence
 
-from app.domains.favorites.entities import Favorite
-from app.domains.favorites.ports import FavoritesRepository
-from app.domains.properties.ports import PropertyRepository, PropertyRecord
-from app.exceptions import NotFoundException
+from app.modules.favorites.domain.entities import Favorite
+from app.modules.favorites.ports.ports import FavoritesRepository
+from app.modules.properties.ports.ports import PropertyRepository, PropertyRecord
+from app.core.exceptions import NotFoundException
 
 
 class FavoritesUseCases:

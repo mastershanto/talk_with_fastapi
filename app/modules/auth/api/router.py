@@ -6,10 +6,10 @@ from pathlib import Path
 
 from fastapi import APIRouter, File, Form, UploadFile
 
-from app.auth_utils import verify_password
-from app.dependencies import AuthServiceDep
-from app.exceptions import BadRequestException
-from app.schemas.auth import (
+from app.core.auth_utils import verify_password
+from app.core.dependencies import AuthServiceDep
+from app.core.exceptions import BadRequestException
+from app.modules.auth.schemas.auth import (
     ChangePasswordRequest,
     EmailOnlyRequest,
     LoginRequest,
@@ -18,7 +18,7 @@ from app.schemas.auth import (
     UserResponse,
     VerifyOtpRequest,
 )
-from app.security import CurrentUser
+from app.core.security import CurrentUser
 
 
 router = APIRouter(prefix="/auth", tags=["Auth"])

@@ -5,9 +5,9 @@ from __future__ import annotations
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.domains.properties.ports import PropertyRepository, PropertyRecord
-from app.models.property import Property
-from app.schemas.property import PropertyCreate, PropertyUpdate
+from app.modules.properties.ports.ports import PropertyRepository, PropertyRecord
+from app.persistence.models.property import Property
+from app.modules.properties.schemas.property import PropertyCreate, PropertyUpdate
 
 
 class SqlAlchemyPropertyRepository(PropertyRepository):

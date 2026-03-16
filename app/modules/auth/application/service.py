@@ -5,11 +5,11 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Callable
 
-from app.auth_utils import decode_token, TOKEN_TYPE_RESET
-from app.domains.auth.ports import AuthRepository, OtpService, UserRecord
-from app.exceptions import ConflictException, NotFoundException, UnauthorizedException, BadRequestException
-from app.otp_service import OTP_PURPOSE_FORGOT_PASSWORD, OTP_PURPOSE_REGISTER
-from app.schemas.auth import (
+from app.core.auth_utils import decode_token, TOKEN_TYPE_RESET
+from app.modules.auth.ports.ports import AuthRepository, OtpService, UserRecord
+from app.core.exceptions import ConflictException, NotFoundException, UnauthorizedException, BadRequestException
+from app.modules.auth.application.otp_service import OTP_PURPOSE_FORGOT_PASSWORD, OTP_PURPOSE_REGISTER
+from app.modules.auth.schemas.auth import (
     ChangePasswordRequest,
     EmailOnlyRequest,
     LoginData,

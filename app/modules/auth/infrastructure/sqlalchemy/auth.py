@@ -7,9 +7,9 @@ from datetime import datetime, timezone
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.auth_utils import create_access_token, create_reset_token, hash_password, verify_password
-from app.domains.auth.ports import AuthRepository, UserRecord
-from app.models.user import User
+from app.core.auth_utils import create_access_token, create_reset_token, hash_password, verify_password
+from app.modules.auth.ports.ports import AuthRepository, UserRecord
+from app.persistence.models.user import User
 
 
 class SqlAlchemyAuthRepository(AuthRepository):

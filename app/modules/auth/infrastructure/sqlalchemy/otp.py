@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from sqlalchemy.orm import Session
 
-from app.domains.auth.ports import OtpService
-from app.otp_service import issue_otp, verify_otp
+from app.modules.auth.ports.ports import OtpService
+from app.modules.auth.application.otp_service import issue_otp, verify_otp
 
 
 class SqlAlchemyOtpService(OtpService):

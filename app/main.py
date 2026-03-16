@@ -23,14 +23,14 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 
-from app.config import settings
-from app.database import Base, engine, SessionLocal
-from app.exceptions import register_exception_handlers
+from app.core.config import settings
+from app.core.database import Base, engine, SessionLocal
+from app.core.exceptions import register_exception_handlers
 from app.routers import users, properties, auth, favorites
-from app.telemetry import init_telemetry
+from app.core.telemetry import init_telemetry
 from sqladmin import Admin, ModelView
-from app.models.user import User
-from app.models.property import Property
+from app.persistence.models.user import User
+from app.persistence.models.property import Property
 
 
 # ── Logging / Observability ─────────────────────────────────────────────────
@@ -50,7 +50,7 @@ def _create_tables() -> None:
     simply omitted — database creation should still succeed or fail fast.
     """
     # Import models so their metadata is registered on Base before create_all
-    from app.models import User, Property  # noqa: F401
+    from app.persistence import models  # noqa: F401
     in_main_thread = threading.current_thread() is threading.main_thread()
 
     if in_main_thread:
@@ -81,7 +81,7 @@ def _seed_sample_data() -> None:
     This is a development convenience only — do NOT use in production.
     Gate behind a feature flag (e.g. DEBUG=true) if you need it long-term.
     """
-    from app.models import User
+    from app.persistence.models.user import User
 
     db = SessionLocal()
     try:
@@ -150,7 +150,7 @@ def create_app() -> FastAPI:
     register_exception_handlers(application)
 
     # ── API routers ────────────────────────────────────────────────────────────
-    from app.version import API_PREFIX
+    from app.core.version import API_PREFIX
 
     application.include_router(auth.router, prefix=API_PREFIX)
     application.include_router(users.router, prefix=API_PREFIX)
@@ -187,7 +187,7 @@ def create_app() -> FastAPI:
     @application.get("/health/db", tags=["Health"], summary="Database readiness probe")
     def health_db() -> dict:
         """Kubernetes readiness check — verifies the DB connection is alive."""
-        from app.dependencies import get_db
+        from app.core.dependencies import get_db
 
         db = next(get_db())
         try:

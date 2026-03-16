@@ -6,10 +6,10 @@ router + schemas + use-cases + ports.
 
 from fastapi import APIRouter, status
 
-from app.dependencies import Pagination, UserServiceDep
-from app.exceptions import NotFoundException
-from app.response_formatter import list_response, success_response
-from app.schemas.user import UserCreate, UserResponse, UserUpdate, UserWithItemsResponse
+from app.core.dependencies import Pagination, UserServiceDep
+from app.core.exceptions import NotFoundException
+from app.core.response_formatter import list_response, success_response
+from app.modules.users.schemas.user import UserCreate, UserResponse, UserUpdate, UserWithItemsResponse
 
 router = APIRouter(prefix="/users", tags=["Users"])
 

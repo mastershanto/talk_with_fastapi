@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from app.domains.properties.ports import PropertyRepository, PropertyRecord
-from app.domains.users.ports import UserRepository
-from app.schemas.property import PropertyCreate, PropertyUpdate
+from app.modules.properties.ports.ports import PropertyRepository, PropertyRecord
+from app.modules.users.ports.ports import UserRepository
+from app.modules.properties.schemas.property import PropertyCreate, PropertyUpdate
 
 
 class PropertyService:

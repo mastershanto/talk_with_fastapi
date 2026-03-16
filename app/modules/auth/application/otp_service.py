@@ -20,9 +20,9 @@ from datetime import datetime, timedelta, timezone
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.config import settings
-from app.exceptions import BadRequestException
-from app.models.otp import EmailOTP
+from app.core.config import settings
+from app.core.exceptions import BadRequestException
+from app.persistence.models.otp import EmailOTP
 
 
 OTP_PURPOSE_REGISTER = "register"

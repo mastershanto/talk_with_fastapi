@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from fastapi import FastAPI
 
-import app.telemetry as telemetry
+import app.core.telemetry as telemetry
 
 
 def test_init_telemetry_skips_tracing_when_disabled(monkeypatch) -> None:

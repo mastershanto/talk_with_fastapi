@@ -1,9 +1,9 @@
 """Compatibility shim.
 
 The project is moving to a feature-first modular monolith. The real router now
-lives at `app.domains.properties.router`.
+lives at `app.modules.properties.api.router`.
 """
 
-from app.domains.properties.router import router
+from app.modules.properties.api.router import router
 
 __all__ = ["router"]

@@ -2,7 +2,7 @@
 Application configuration via pydantic-settings.
 
 All settings are readable from environment variables or a `.env` file.
-Use `from app.config import settings` anywhere in the project.
+Use `from app.core.config import settings` anywhere in the project.
 """
 from functools import lru_cache
 
@@ -92,7 +92,7 @@ def get_settings() -> Settings:
     """Return the singleton Settings instance (cached after first call)."""
     # Load optional secrets from external vault before instantiating settings.
     try:
-        from app.secrets import load_vault_secrets
+        from app.core.secrets import load_vault_secrets
 
         load_vault_secrets()
     except Exception:
