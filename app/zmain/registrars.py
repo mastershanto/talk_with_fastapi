@@ -11,7 +11,7 @@ from app.core.database import engine
 from app.core.dependencies import get_db
 from app.persistence.models.property import Property
 from app.persistence.models.user import User
-from app.routers import auth, favorites, properties, users
+from app.routers import auth, favorites, properties, users, iris_talk
 
 
 logger = logging.getLogger(__name__)
@@ -27,6 +27,7 @@ class RouterRegistrar:
         application.include_router(users.router, prefix=API_PREFIX)
         application.include_router(properties.router, prefix=API_PREFIX)
         application.include_router(favorites.router, prefix=API_PREFIX)
+        application.include_router(iris_talk.router, prefix=API_PREFIX)
 
 
 class AdminRegistrar:
