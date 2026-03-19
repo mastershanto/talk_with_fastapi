@@ -273,9 +273,21 @@ OTEL_EXPORTER_OTLP_ENDPOINT=https://<otel-collector>:4318/v1/traces
 
 ### Migrations (Alembic)
 
+All database migrations are in the `migrations/` folder.
+
 ```bash
-python -m alembic upgrade head
-python -m alembic revision --autogenerate -m "add_field"
+# Upgrade to latest schema
+cd migrations && python -m alembic upgrade head
+
+# Create a new migration
+cd migrations && python -m alembic revision --autogenerate -m "add_field"
+```
+
+Or use the Makefile shortcut:
+
+```bash
+make db-upgrade
+make db-revision
 ```
 
 By default, the app does not auto-create tables on startup.

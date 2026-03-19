@@ -110,14 +110,24 @@ This project includes structured JSON logging and optional OpenTelemetry tracing
 
 This project supports **migration-driven schema changes** via Alembic.
 
-- Config: `alembic.ini`, `alembic/env.py`
-- Initial revision: `alembic/versions/`
+All migration files are isolated in the `migrations/` folder:
+- Config: `migrations/alembic.ini`, `migrations/alembic/env.py`
+- Versions: `migrations/alembic/versions/`
 
 Recommended workflow:
 
 ```bash
+cd migrations
 python -m alembic upgrade head
 python -m alembic revision --autogenerate -m "add_field"
+cd ..
+```
+
+Or use the Makefile shortcuts from the project root:
+
+```bash
+make db-upgrade
+make db-revision
 ```
 
 Startup schema creation is controlled by `DB_AUTO_CREATE_TABLES` (disabled by default).

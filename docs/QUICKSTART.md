@@ -82,11 +82,11 @@ make typecheck
 # Architecture guard
 make arch-guard
 
-# Database migration
-make db-upgrade
+# Database migration (from migrations/ folder)
+cd migrations && alembic upgrade head && cd ..
 
-# Create migration
-make db-revision
+# Create migration (from migrations/ folder)
+cd migrations && alembic revision --autogenerate -m "description" && cd ..
 ```
 
 ### View API docs:

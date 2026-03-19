@@ -34,7 +34,7 @@ test:
 ci: lint typecheck arch-guard test
 
 db-upgrade:
-	python -m alembic upgrade head
+	cd migrations && python -m alembic upgrade head
 
 db-revision:
-	python -m alembic revision --autogenerate -m "change"
+	cd migrations && python -m alembic revision --autogenerate -m "change"
