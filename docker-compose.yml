@@ -5,6 +5,7 @@ services:
   db:
     image: postgres:15-alpine
     container_name: talk_with_fastapi_db
+    env_file: ./config/.env
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-avnadmin}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
@@ -28,6 +29,7 @@ services:
       context: .
       dockerfile: docker/Dockerfile
     container_name: talk_with_fastapi_api
+    env_file: ./config/.env
     environment:
       DATABASE_URL: ${DATABASE_URL:-postgresql://avnadmin:changeme@db:5432/defaultdb}
       DB_AUTO_CREATE_TABLES: ${DB_AUTO_CREATE_TABLES:-false}
