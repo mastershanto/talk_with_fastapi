@@ -66,13 +66,13 @@ Quick Start
    pip install -r requirements.txt
 
 2. Run migrations (recreate tables with new schema):
-   python migrate_db.py
+   python scripts/migrate_db.py
 
 3. Seed admin user:
-   python seed_admin.py
+   python scripts/seed_admin.py
 
 4. Start the server:
-   ./run.sh
+   bash scripts/run.sh
 
 API Endpoints
 -------------

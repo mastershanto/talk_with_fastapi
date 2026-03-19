@@ -68,7 +68,7 @@ brew services start postgresql@15
 
 # Create user and database
 cd /Users/masterShanto/developments/talk_with_fastapi
-bash setup_postgres.sh
+bash scripts/setup_postgres.sh
 ```
 
 ### 2. Verification
@@ -88,14 +88,14 @@ psql real_estate_db
 
 1. **app/config.py** - Updated DATABASE_URL default
 2. **.env** - Switched to PostgreSQL connection string
-3. **POSTGRES_SETUP.md** - New comprehensive setup guide
-4. **setup_postgres.sh** - New automated setup script
+3. **docs/POSTGRES_SETUP.md** - New comprehensive setup guide
+4. **scripts/setup_postgres.sh** - New automated setup script
 
 ## Files Created
 
-- `POSTGRES_SETUP.md` - Complete PostgreSQL setup guide for all OS
-- `setup_postgres.sh` - Automated PostgreSQL initialization script
-- `MIGRATION_SUMMARY.md` - This file
+- `docs/POSTGRES_SETUP.md` - Complete PostgreSQL setup guide for all OS
+- `scripts/setup_postgres.sh` - Automated PostgreSQL initialization script
+- `docs/MIGRATION_SUMMARY.md` - This file
 
 ## Testing Results
 

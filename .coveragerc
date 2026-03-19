@@ -1,8 +1,0 @@
-[run]
-omit =
-    app/repositories/*
-    app/routers/*
-
-[report]
-show_missing = true
-skip_covered = false

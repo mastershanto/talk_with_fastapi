@@ -1,6 +1,6 @@
 """
 Seed admin user with email and password for testing.
-Run this script to create initial test user: python seed_admin.py
+Run this script to create initial test user: python scripts/seed_admin.py
 """
 import sys
 from datetime import datetime

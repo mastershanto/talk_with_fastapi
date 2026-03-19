@@ -65,7 +65,7 @@ Example: `app/domains/favorites/router.py`.
 
 Example: `app/infrastructure/sqlalchemy/favorites.py` + `app/models/favorite.py`.
 
-## Dependency rule (the “future-proof” core)
+## Dependency rule (the "future-proof" core)
 
 **Allowed dependencies** (outer -> inner):
 

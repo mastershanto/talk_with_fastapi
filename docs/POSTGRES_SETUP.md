@@ -98,7 +98,7 @@ except Exception as e:
 source .venv/bin/activate
 
 # Start the server
-./run.sh
+bash scripts/run.sh
 
 # Or manually:
 uvicorn app.main:app --reload

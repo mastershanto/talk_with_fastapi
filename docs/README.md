@@ -27,13 +27,13 @@ This project teaches you:
 
 ```bash
 # 1. Set up PostgreSQL (first time only)
-bash setup_postgres.sh
+bash scripts/setup_postgres.sh
 
 # 2. Activate virtual environment
 source .venv/bin/activate
 
 # 3. Run the server
-./run.sh
+bash scripts/run.sh
 
 # 4. Visit API documentation
 open http://localhost:8000/docs
@@ -48,7 +48,7 @@ This application uses **PostgreSQL** for production-grade reliability and scalab
 
 ### Setup
 
-- **macOS**: `bash setup_postgres.sh`
+- **macOS**: `bash scripts/setup_postgres.sh`
 - **Full Guide**: See [POSTGRES_SETUP.md](./POSTGRES_SETUP.md)
 
 ### Features

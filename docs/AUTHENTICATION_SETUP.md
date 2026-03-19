@@ -99,8 +99,8 @@ Response (200):
 - `app/repositories/auth.py` - Authentication business logic
 - `app/routers/auth.py` - API endpoints
 - `app/schemas/auth.py` - Request/response models
-- `seed_admin.py` - Script to create test admin user
-- `AUTH_SYSTEM.md` - Detailed documentation
+- `scripts/seed_admin.py` - Script to create test admin user
+- `docs/AUTH_SYSTEM.md` - Detailed documentation
 
 ### 5. **Files Modified**
 - `app/models/user.py` - Added authentication and profile fields
@@ -121,12 +121,12 @@ pip install "python-jose[cryptography]" "passlib[bcrypt]" bcrypt python-multipar
 
 ### Step 2: Recreate Database Schema
 ```bash
-python migrate_db.py
+python scripts/migrate_db.py
 ```
 
 ### Step 3: Seed Admin User
 ```bash
-python seed_admin.py
+python scripts/seed_admin.py
 ```
 Output:
 ```
@@ -138,7 +138,7 @@ Output:
 
 ### Step 4: Start Server
 ```bash
-./run.sh
+bash scripts/run.sh
 # or
 uvicorn app.main:app --reload
 ```
