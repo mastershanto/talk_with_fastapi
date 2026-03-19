@@ -11,7 +11,8 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.utils._bunch import Bunch
 
 
-MODEL_PATH = Path.cwd() / "ai_models" / "iris_model.joblib"
+# Resolve model path from project root (4 levels up from this file)
+MODEL_PATH = Path(__file__).resolve().parent.parent.parent.parent.parent / "ai_models" / "iris_model.joblib"
 
 
 class SklearnIrisModel:
