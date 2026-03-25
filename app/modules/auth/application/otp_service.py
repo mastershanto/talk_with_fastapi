@@ -12,16 +12,19 @@ Replace with a real provider (SES/SendGrid/etc.) in production.
 
 from __future__ import annotations
 
+import smtplib
+import ssl
 import hmac
 import hashlib
 import secrets
 from datetime import datetime, timedelta, timezone
+from email.message import EmailMessage
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
-from app.core.exceptions import BadRequestException
+from app.core.exceptions import BadRequestException, ServiceUnavailableException
 from app.persistence.models.otp import EmailOTP
 
 
@@ -69,11 +72,68 @@ def _generate_otp() -> str:
 def send_otp(email: str, purpose: str, otp: str) -> None:
     """Deliver OTP to the user.
 
-    Current implementation logs the OTP for local development.
-    Replace with a real email provider in production.
+    If SMTP is enabled, send via SMTP.
+    Otherwise, in DEBUG mode only, print the OTP for local development.
     """
-    # Intentionally prints minimal context. In production, do NOT log OTPs.
-    print(f"[OTP:{purpose}] {email} -> {otp}")
+    if not settings.SMTP_ENABLED:
+        # Dev-only convenience: never log OTPs in production.
+        if settings.DEBUG:
+            print(f"[OTP:{purpose}] {email} -> {otp}")
+        return
+
+    if not settings.SMTP_HOST:
+        raise ServiceUnavailableException("SMTP is enabled but SMTP_HOST is not set")
+
+    from_email = settings.SMTP_FROM_EMAIL or settings.SMTP_USERNAME
+    if not from_email:
+        raise ServiceUnavailableException("SMTP_FROM_EMAIL (or SMTP_USERNAME) must be set")
+
+    if bool(settings.SMTP_USERNAME) ^ bool(settings.SMTP_PASSWORD):
+        raise ServiceUnavailableException("SMTP_USERNAME and SMTP_PASSWORD must be set together")
+
+    subject = "Your OTP code"
+    body = (
+        "Your one-time code is: "
+        f"{otp}\n\n"
+        f"Purpose: {purpose}\n"
+        f"Expires in: {OTP_TTL_MINUTES} minutes\n"
+    )
+
+    msg = EmailMessage()
+    msg["Subject"] = subject
+    msg["From"] = from_email
+    msg["To"] = email
+    msg.set_content(body)
+
+    context = ssl.create_default_context()
+
+    try:
+        if settings.SMTP_USE_SSL:
+            with smtplib.SMTP_SSL(
+                host=settings.SMTP_HOST,
+                port=settings.SMTP_PORT,
+                timeout=settings.SMTP_TIMEOUT_SECONDS,
+                context=context,
+            ) as smtp:
+                if settings.SMTP_USERNAME and settings.SMTP_PASSWORD:
+                    smtp.login(settings.SMTP_USERNAME, settings.SMTP_PASSWORD)
+                smtp.send_message(msg)
+            return
+
+        with smtplib.SMTP(
+            host=settings.SMTP_HOST,
+            port=settings.SMTP_PORT,
+            timeout=settings.SMTP_TIMEOUT_SECONDS,
+        ) as smtp:
+            smtp.ehlo()
+            if settings.SMTP_USE_TLS:
+                smtp.starttls(context=context)
+                smtp.ehlo()
+            if settings.SMTP_USERNAME and settings.SMTP_PASSWORD:
+                smtp.login(settings.SMTP_USERNAME, settings.SMTP_PASSWORD)
+            smtp.send_message(msg)
+    except Exception as exc:
+        raise ServiceUnavailableException("Failed to send OTP") from exc
 
 
 def issue_otp(db: Session, *, email: str, purpose: str) -> str:
