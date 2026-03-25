@@ -9,6 +9,7 @@ from fastapi import APIRouter, File, Form, UploadFile
 from app.core.auth_utils import verify_password
 from app.core.dependencies import AuthServiceDep
 from app.core.exceptions import BadRequestException
+from app.core.response_formatter import success_response
 from app.modules.auth.schemas.auth import (
     ChangePasswordRequest,
     EmailOnlyRequest,
@@ -27,46 +28,42 @@ router = APIRouter(prefix="/auth", tags=["Auth"])
 @router.post("/register")
 def register(payload: RegisterRequest, service: AuthServiceDep) -> dict:
     result = service.register(payload)
-    return {
-        "success": True,
-        "message": "OTP sent to your email",
-        "data": {"email": result.email, "otp": result.otp},
-        "code": 200,
-    }
+    return success_response(
+        data={"email": result.email, "otp": result.otp},
+        message="OTP sent to your email",
+        code=200,
+    )
 
 
 @router.post("/register/resend-otp")
 def register_resend_otp(payload: EmailOnlyRequest, service: AuthServiceDep) -> dict:
     otp = service.resend_register_otp(payload)
     email = payload.email.strip().lower()
-    return {
-        "success": True,
-        "message": "OTP resent successfully",
-        "data": {"email": email, "otp": otp},
-        "code": 200,
-    }
+    return success_response(
+        data={"email": email, "otp": otp},
+        message="OTP resent successfully",
+        code=200,
+    )
 
 
 @router.post("/register/otp-verify")
 def register_verify_otp(payload: VerifyOtpRequest, service: AuthServiceDep) -> dict:
     login_data = service.verify_register_otp(payload)
-    return {
-        "success": True,
-        "message": "OTP verified successfully",
-        "data": login_data.model_dump(),
-        "code": 200,
-    }
+    return success_response(
+        data=login_data.model_dump(),
+        message="OTP verified successfully",
+        code=200,
+    )
 
 
 @router.post("/login")
 def login(payload: LoginRequest, service: AuthServiceDep) -> dict:
     login_data = service.login(payload)
-    return {
-        "success": True,
-        "message": "Login successful",
-        "data": login_data.model_dump(),
-        "code": 200,
-    }
+    return success_response(
+        data=login_data.model_dump(),
+        message="Login successful",
+        code=200,
+    )
 
 
 @router.post("/forgot-password")
@@ -75,12 +72,11 @@ def forgot_password(payload: EmailOnlyRequest, service: AuthServiceDep) -> dict:
     data: dict[str, str] = {"email": email}
     if otp:
         data["otp"] = otp
-    return {
-        "success": True,
-        "message": "If the account exists, an OTP has been sent to the email",
-        "data": data,
-        "code": 200,
-    }
+    return success_response(
+        data=data,
+        message="If the account exists, an OTP has been sent to the email",
+        code=200,
+    )
 
 
 @router.post("/forgot-password/resend-otp")
@@ -89,44 +85,40 @@ def forgot_password_resend(payload: EmailOnlyRequest, service: AuthServiceDep) -
     data: dict[str, str] = {"email": email}
     if otp:
         data["otp"] = otp
-    return {
-        "success": True,
-        "message": "If the account exists, an OTP has been sent to the email",
-        "data": data,
-        "code": 200,
-    }
+    return success_response(
+        data=data,
+        message="If the account exists, an OTP has been sent to the email",
+        code=200,
+    )
 
 
 @router.post("/forgot-password/otp-verify")
 def forgot_password_verify(payload: VerifyOtpRequest, service: AuthServiceDep) -> dict:
     reset_data = service.forgot_password_verify(payload)
-    return {
-        "success": True,
-        "message": "OTP verified successfully",
-        "data": reset_data.model_dump(),
-        "code": 200,
-    }
+    return success_response(
+        data=reset_data.model_dump(),
+        message="OTP verified successfully",
+        code=200,
+    )
 
 
 @router.post("/reset-password")
 def reset_password(payload: ResetPasswordRequest, service: AuthServiceDep) -> dict:
     login_data = service.reset_password(payload)
-    return {
-        "success": True,
-        "message": "OTP verified successfully",
-        "data": login_data.model_dump(),
-        "code": 200,
-    }
+    return success_response(
+        data=login_data.model_dump(),
+        message="OTP verified successfully",
+        code=200,
+    )
 
 
 @router.get("/profile")
 def profile(current_user: CurrentUser) -> dict:
-    return {
-        "success": True,
-        "message": "User data retrieved successfully",
-        "data": UserResponse.model_validate(current_user).model_dump(),
-        "code": 200,
-    }
+    return success_response(
+        data=UserResponse.model_validate(current_user).model_dump(),
+        message="User data retrieved successfully",
+        code=200,
+    )
 
 
 @router.put("/profile")
@@ -182,33 +174,30 @@ def update_profile(
         fields["refer_photo"] = safe_filename
 
     updated_user = service.update_profile(current_user.id, fields=fields)
-    return {
-        "success": True,
-        "message": "Profile updated successfully",
-        "data": UserResponse.model_validate(updated_user).model_dump(),
-        "code": 200,
-    }
+    return success_response(
+        data=UserResponse.model_validate(updated_user).model_dump(),
+        message="Profile updated successfully",
+        code=200,
+    )
 
 
 @router.put("/change-password")
 def change_password(current_user: CurrentUser, payload: ChangePasswordRequest, service: AuthServiceDep) -> dict:
     user = service.change_password(current_user.id, payload, verify_fn=verify_password)
-    return {
-        "success": True,
-        "message": "Password changed successfully",
-        "data": UserResponse.model_validate(user).model_dump(),
-        "code": 200,
-    }
+    return success_response(
+        data=UserResponse.model_validate(user).model_dump(),
+        message="Password changed successfully",
+        code=200,
+    )
 
 
 @router.post("/logout")
 def logout(current_user: CurrentUser) -> dict:
-    return {
-        "success": True,
-        "message": "Logged out successfully",
-        "data": {"email": current_user.email},
-        "code": 200,
-    }
+    return success_response(
+        data={"email": current_user.email},
+        message="Logged out successfully",
+        code=200,
+    )
 
 
 @router.delete("/account")
@@ -224,9 +213,8 @@ def delete_account(current_user: CurrentUser, service: AuthServiceDep) -> dict:
                 pass
 
     email = service.delete_account(current_user.id)
-    return {
-        "success": True,
-        "message": "Account deleted successfully",
-        "data": {"email": email},
-        "code": 200,
-    }
+    return success_response(
+        data={"email": email},
+        message="Account deleted successfully",
+        code=200,
+    )

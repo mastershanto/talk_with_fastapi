@@ -1,16 +1,15 @@
-"""
-Custom exception hierarchy and FastAPI exception handlers.
+"""Custom exception hierarchy and FastAPI exception handlers.
 
-Usage in a route:
-    from app.exceptions import NotFoundException
-    raise NotFoundException("User 42 not found.")
-
-Register all handlers once in create_app():
-    from app.exceptions import register_exception_handlers
-    register_exception_handlers(app)
+This module ensures error responses follow the same envelope as
+`app.core.response_formatter`.
 """
+
 from fastapi import FastAPI, Request, status
+from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from starlette.exceptions import HTTPException as StarletteHTTPException
+
+from app.core.response_formatter import error_response
 
 
 # ── Custom exception hierarchy ────────────────────────────────────────────────
@@ -86,15 +85,38 @@ async def _app_exception_handler(
 ) -> JSONResponse:
     return JSONResponse(
         status_code=exc.status_code,
-        content={
-            "success": False,
-            "message": exc.detail,
-            "data": None,
-            "code": exc.status_code,
-        },
+        content=error_response(message=exc.detail, code=exc.status_code, data=None),
+    )
+
+
+async def _validation_exception_handler(
+    request: Request,  # noqa: ARG001
+    exc: RequestValidationError,
+) -> JSONResponse:
+    return JSONResponse(
+        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        content=error_response(
+            message="Validation error",
+            code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            data={"errors": exc.errors()},
+        ),
+    )
+
+
+async def _http_exception_handler(
+    request: Request,  # noqa: ARG001
+    exc: StarletteHTTPException,
+) -> JSONResponse:
+    # FastAPI/Starlette raise these for things like 404/405 and explicit HTTPException.
+    detail = exc.detail if isinstance(exc.detail, str) else "HTTP error"
+    return JSONResponse(
+        status_code=exc.status_code,
+        content=error_response(message=detail, code=exc.status_code, data=None),
     )
 
 
 def register_exception_handlers(app: FastAPI) -> None:
     """Attach all custom exception handlers to the given FastAPI instance."""
     app.add_exception_handler(AppException, _app_exception_handler)  # type: ignore[arg-type]
+    app.add_exception_handler(RequestValidationError, _validation_exception_handler)  # type: ignore[arg-type]
+    app.add_exception_handler(StarletteHTTPException, _http_exception_handler)  # type: ignore[arg-type]
