@@ -12,13 +12,15 @@ router = APIRouter(prefix="/todos", tags=["todo"])
 @router.get("/", response_model=list[TodoRead])
 async def list_todos(session: AsyncSession = Depends(get_session)) -> list[TodoRead]:
     service = TodoService(TodoRepositoryImpl(session))
-    return await service.list_todos()
+    todos = await service.list_todos()
+    return [TodoRead.model_validate(todo) for todo in todos]
 
 
 @router.post("/", response_model=TodoRead, status_code=status.HTTP_201_CREATED)
 async def create_todo(todo_create: TodoCreate, session: AsyncSession = Depends(get_session)) -> TodoRead:
     service = TodoService(TodoRepositoryImpl(session))
-    return await service.create_todo(todo_create)
+    todo = await service.create_todo(todo_create)
+    return TodoRead.model_validate(todo)
 
 
 @router.get("/{todo_id}", response_model=TodoRead)
@@ -27,7 +29,7 @@ async def get_todo(todo_id: int, session: AsyncSession = Depends(get_session)) -
     todo = await service.get_todo(todo_id)
     if todo is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Todo not found")
-    return todo
+    return TodoRead.model_validate(todo)
 
 
 @router.put("/{todo_id}", response_model=TodoRead)
@@ -40,7 +42,7 @@ async def update_todo(
     todo = await service.update_todo(todo_id, todo_update)
     if todo is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Todo not found")
-    return todo
+    return TodoRead.model_validate(todo)
 
 
 @router.delete("/{todo_id}", status_code=status.HTTP_204_NO_CONTENT)

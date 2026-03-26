@@ -5,7 +5,7 @@ from sqlalchemy import engine_from_config, pool
 from sqlalchemy import create_engine
 from sqlalchemy import MetaData
 
-from alembic import context
+from alembic import context  # type: ignore[attr-defined]  # pyright: ignore [reportMissingImports]
 
 from app.core.config import settings
 from app.core.database import Base

@@ -2,7 +2,7 @@ import logging
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
-from pythonjsonlogger.jsonlogger import JsonFormatter 
+from pythonjsonlogger.json import JsonFormatter  # type: ignore[attr-defined]  # pyright: ignore [reportMissingImports]
 
 from app.core.config import settings
 from app.core.database import Base, engine
