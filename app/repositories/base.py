@@ -24,7 +24,7 @@ from pydantic import BaseModel
 from sqlalchemy import select, func
 from sqlalchemy.orm import Session
 
-from app.database import Base
+from app.core.database import Base
 
 # Generic type variables
 ModelT = TypeVar("ModelT", bound=Base)

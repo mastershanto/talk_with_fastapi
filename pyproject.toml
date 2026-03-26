@@ -1,0 +1,50 @@
+[project]
+name = "talk-with-fastapi"
+version = "0.0.0"
+requires-python = ">=3.10"
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+# Start with high-signal rules only; expand over time.
+select = [
+  "E4",  # imports
+  "E7",  # indentation
+  "E9",  # syntax errors
+  "F",   # pyflakes
+]
+ignore = [
+  "E501", # line length (formatter responsibility)
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Tests often use fixtures and assert patterns; keep flexible.
+"tests/**" = ["F811"]
+
+[tool.mypy]
+python_version = "3.10"
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_unreachable = true
+no_implicit_optional = true
+check_untyped_defs = true
+
+# Gradual typing: keep the door open to strictness later.
+disallow_untyped_defs = false
+
+# Third-party libs in FastAPI stacks frequently lack full typing.
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["tests.*"]
+disallow_untyped_defs = false
+
+[[tool.mypy.overrides]]
+module = ["app.modules.*", "app.persistence.*", "app.main", "app.dependencies"]
+disallow_untyped_defs = true
