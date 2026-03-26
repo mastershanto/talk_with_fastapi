@@ -15,8 +15,8 @@ from datetime import datetime, timezone
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.models.user import User
-from app.auth_utils import hash_password, verify_password, create_access_token, create_reset_token
+from app.persistence.models.user import User
+from app.core.auth_utils import hash_password, verify_password, create_access_token, create_reset_token
 
 
 class AuthRepository:
@@ -30,16 +30,16 @@ class AuthRepository:
     def verify_user_credentials(self, db: Session, email: str, password: str) -> User | None:
         """
         Verify user credentials (email and password).
-        
+
         Returns the user if credentials are valid, None otherwise.
         """
         user = self.get_user_by_email(db, email)
         if not user:
             return None
-        
+
         if not verify_password(password, user.password_hash):
             return None
-        
+
         return user
 
     def create_user(
@@ -60,11 +60,11 @@ class AuthRepository:
             name=name,
             **kwargs
         )
-        
+
         db.add(user)
         db.commit()
         db.refresh(user)
-        
+
         return user
 
     def mark_email_verified(self, db: Session, user: User) -> User:

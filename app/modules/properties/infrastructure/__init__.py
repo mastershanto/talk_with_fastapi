@@ -1,0 +1,1 @@
+"""Properties infrastructure layer (adapters)."""

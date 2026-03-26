@@ -1,14 +1,12 @@
+"""Compatibility shim.
+
+The project is moving to a feature-first modular monolith. The real router now
+lives at `app.modules.users.api.router`.
 """
-User endpoints.
 
-Routes
-------
-GET    /api/v1/users            list_users    — paginated list
-    "/api/v1/users/{id}       get_user      — single user + their properties
-POST   /api/v1/users            create_user   — create new user
-PUT    /api/v1/users/{id}       update_user   — partial update
-DELETE /api/v1/users/{id}       delete_user   — hard delete (cascades to properties)
+from app.modules.users.api.router import router
 
+<<<<<<< HEAD
 All database errors escalate as AppException subclasses, caught by the
 global exception handler registered in main.py — no try/except noise here.
 """
@@ -93,3 +91,6 @@ def delete_user(user_id: int, db: DBSession) -> dict:
         raise NotFoundException(f"User {user_id} not found.")
     user_crud.remove(db, record_id=user_id)
     return success_response(data={"id": user_id}, message="User deleted successfully", code=200)
+=======
+__all__ = ["router"]
+>>>>>>> 7199041aea298502b86585a00da5e2a710d75cd3

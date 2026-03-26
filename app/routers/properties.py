@@ -1,16 +1,12 @@
-"""
-Property endpoints.
+"""Compatibility shim.
 
-Routes
-------
-GET    /api/v1/properties            list_properties    — paginated list
-GET    /api/v1/properties/{id}       get_property       — single property
-POST   /api/v1/properties            create_property    — create property
-PUT    /api/v1/properties/{id}       update_property    — partial update
-DELETE /api/v1/properties/{id}       delete_property    — hard delete
+The project is moving to a feature-first modular monolith. The real router now
+lives at `app.modules.properties.api.router`.
 """
-from fastapi import APIRouter, status
 
+from app.modules.properties.api.router import router
+
+<<<<<<< HEAD
 from app.repositories.property import property_crud
 from app.repositories.user import user_crud  # Import correctly from app.repositories.user
 from app.dependencies import DBSession, Pagination
@@ -89,3 +85,6 @@ def delete_property(property_id: int, db: DBSession) -> dict:
         raise NotFoundException(f"Property {property_id} not found.")
     property_crud.remove(db, record_id=property_id)
     return success_response(data={"id": property_id}, message="Property deleted successfully", code=200)
+=======
+__all__ = ["router"]
+>>>>>>> 7199041aea298502b86585a00da5e2a710d75cd3
