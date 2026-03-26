@@ -34,14 +34,15 @@ class TodoRepositoryImpl(TodoRepository):
         return self._to_dto(item) if item is not None else None
 
     async def create(self, todo_create: TodoCreate) -> TodoItem:
-        todo = TodoORM(**todo_create.dict())
+        todo = TodoORM(**todo_create.model_dump())
         self.db.add(todo)
         await self.db.commit()
         await self.db.refresh(todo)
         return self._to_dto(todo)
 
     async def update(self, todo_id: int, todo_update: TodoUpdate) -> Optional[TodoItem]:
-        stmt = update(TodoORM).where(TodoORM.id == todo_id).values(**{k: v for k, v in todo_update.dict(exclude_none=True).items()})
+        payload = todo_update.model_dump(exclude_none=True)
+        stmt = update(TodoORM).where(TodoORM.id == todo_id).values(**payload)
         await self.db.execute(stmt)
         await self.db.commit()
         return await self.get(todo_id)
