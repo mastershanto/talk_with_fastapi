@@ -1,1 +1,0 @@
-"""Favorites infrastructure layer (adapters)."""

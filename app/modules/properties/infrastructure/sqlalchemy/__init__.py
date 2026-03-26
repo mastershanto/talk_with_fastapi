@@ -1,1 +1,0 @@
-"""SQLAlchemy-backed properties adapters."""

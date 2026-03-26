@@ -1,48 +1,34 @@
-"""Security dependencies (JWT Bearer auth)."""
+import datetime
+from typing import Any, Dict, Optional
 
-from __future__ import annotations
+from jose import JWTError, jwt
+from passlib.context import CryptContext
 
-from typing import Annotated
+from app.core.config import settings
 
-from fastapi import Depends
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from sqlalchemy.orm import Session
-
-from app.core.auth_utils import decode_token, TOKEN_TYPE_ACCESS
-from app.core.dependencies import get_db
-from app.core.exceptions import UnauthorizedException
-from app.persistence.models.user import User
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
-bearer_scheme = HTTPBearer(auto_error=False)
+def hash_password(password: str) -> str:
+    return pwd_context.hash(password)
 
 
-def get_current_user(
-    db: Session = Depends(get_db),
-    credentials: HTTPAuthorizationCredentials | None = Depends(bearer_scheme),
-) -> User:
-    """Return the authenticated user from a Bearer JWT."""
-    if credentials is None or credentials.scheme.lower() != "bearer":
-        raise UnauthorizedException("Authentication required")
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    return pwd_context.verify(plain_password, hashed_password)
 
-    payload = decode_token(credentials.credentials)
-    if not payload or payload.get("type") != TOKEN_TYPE_ACCESS:
-        raise UnauthorizedException("Invalid or expired token")
 
-    sub = payload.get("sub")
-    if not sub:
-        raise UnauthorizedException("Invalid token")
+def create_access_token(data: Dict[str, Any], expires_delta: Optional[datetime.timedelta] = None) -> str:
+    to_encode = data.copy()
+    if expires_delta is None:
+        expires_delta = datetime.timedelta(minutes=settings.access_token_expire_minutes)
+    expire = datetime.datetime.utcnow() + expires_delta
+    to_encode.update({"exp": expire})
+    return jwt.encode(to_encode, settings.jwt_secret_key, algorithm=settings.jwt_algorithm)
 
+
+def decode_access_token(token: str) -> Dict[str, Any]:
     try:
-        user_id = int(sub)
-    except (TypeError, ValueError):
-        raise UnauthorizedException("Invalid token")
-
-    user = db.get(User, user_id)
-    if not user:
-        raise UnauthorizedException("Invalid token")
-
-    return user
-
-
-CurrentUser = Annotated[User, Depends(get_current_user)]
+        payload = jwt.decode(token, settings.jwt_secret_key, algorithms=[settings.jwt_algorithm])
+        return payload
+    except JWTError as exc:
+        raise JWTError("Token validation failed") from exc

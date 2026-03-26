@@ -1,1 +1,1 @@
-"""Business modules (domain-first feature packages)."""
+# Modules package

@@ -1,1 +1,0 @@
-"""Properties request/response schemas."""

@@ -1,1 +1,0 @@
-"""Properties ports (interfaces)."""

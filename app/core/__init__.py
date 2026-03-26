@@ -1,5 +1,1 @@
-"""Core (cross-cutting) application modules.
-
-This package contains configuration, database wiring, exceptions, telemetry,
-and other cross-domain concerns.
-"""
+# Core subpackage for configuration and shared services

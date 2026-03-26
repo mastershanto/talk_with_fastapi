@@ -1,1 +1,0 @@
-"""Favorites request/response schemas."""
