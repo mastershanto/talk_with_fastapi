@@ -9,7 +9,7 @@ from passlib.context import CryptContext
 from app.core.config import settings
 from app.modules.auth_module.domain.models import User
 
-pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
+pwd_context = CryptContext(schemes=['pbkdf2_sha256'], deprecated='auto')
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='auth/token')
 
 
@@ -21,9 +21,12 @@ def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
 
 
+from datetime import datetime, timedelta, timezone
+
+
 def create_access_token(data: dict[str, Any], expires_delta: timedelta | None = None) -> str:
     to_encode = data.copy()
-    expire = datetime.utcnow() + (expires_delta or timedelta(minutes=settings.jwt_access_token_expires_minutes))
+    expire = datetime.now(timezone.utc) + (expires_delta or timedelta(minutes=settings.jwt_access_token_expires_minutes))
     to_encode.update({'exp': expire})
     return jwt.encode(to_encode, settings.jwt_secret_key, algorithm=settings.jwt_algorithm)
 

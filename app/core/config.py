@@ -1,4 +1,4 @@
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     app_name: str = 'fastapi_project'
@@ -10,7 +10,8 @@ class Settings(BaseSettings):
     jwt_access_token_expires_minutes: int = 60
     backend_cors_origins: list[str] = ['*']
 
-    class Config:
-        env_file = '.env'
+    model_config = {
+        'env_file': '.env',
+    }
 
 settings = Settings()
