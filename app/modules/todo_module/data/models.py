@@ -1,5 +1,5 @@
-from sqlalchemy import Boolean, Column, DateTime, Integer, String
-from sqlalchemy.sql import func
+from sqlalchemy import Boolean, Column, DateTime, Integer, String # pyright: ignore[reportMissingImports]
+from sqlalchemy.sql import func # pyright: ignore[reportMissingImports]
 
 from app.core.database import Base
 

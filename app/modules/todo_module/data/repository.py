@@ -1,6 +1,6 @@
 from typing import List
 
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session # pyright: ignore[reportMissingImports]
 
 from app.modules.todo_module.data.models import TodoDB
 from app.modules.todo_module.domain.entities import Todo
