@@ -41,8 +41,8 @@ def decode_access_token(token: str) -> dict[str, Any]:
 
 def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
     payload = decode_access_token(token)
-    user_id: str = payload.get('sub')
-    username: str = payload.get('username')
+    user_id: Any = payload.get('sub')
+    username: Any = payload.get('username')
     if user_id is None or username is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Could not validate credentials')
     return User(id=int(user_id), username=username)
