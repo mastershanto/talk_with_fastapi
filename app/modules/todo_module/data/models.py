@@ -13,3 +13,17 @@ class TodoDB(Base):
     completed = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+
+
+class NoteDB(Base):
+    __tablename__= 'notes'
+    
+    id=Column(Integer, primary_key=True, index=True)
+    title=Column(String(256), nullable=False)
+    description =Column(String (1024), nullable=True)
+    completed=Column(Boolean, default=False)
+    created_at=Column(DateTime(timezone=True),server_default=func.now())
+    updated_at=Column(DateTime(timezone=True),server_default=func.now())
+    
+    
+    
